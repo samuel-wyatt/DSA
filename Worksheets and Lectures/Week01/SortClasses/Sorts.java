@@ -8,11 +8,11 @@ class Sorts
     public static void bubbleSort(int[] A)
     {
         boolean swap;
-        int size = A.length;
+        int s = A.length;
         do 
         {
             swap = false;
-            for (int i = 0; i < size - 1; i++) 
+            for (int i = 0; i < s - 1; i++) 
             { 
                 if (A[i] > A[i + 1]) 
                 {
@@ -28,11 +28,44 @@ class Sorts
     // selection sort
     public static void selectionSort(int[] A)
     {
+        int s = A.length;
+        for (int i = 0; i < s - 1; i++)  
+        {
+            int minValue = A[i];
+            int minIndex = i;
+            for (int j = i + 1; j < s; j++)
+            {
+                if (A[j] < minValue)
+                {
+                    minValue = A[j];
+                    minIndex = j;
+                }
+            }
+            if (minValue < A[i])
+            {
+                int temp = A[i];
+                A[i] = A[minIndex];
+                A[minIndex] = temp;            
+            }
+        }
     }// selectionSort()
 
     // insertion sort
     public static void insertionSort(int[] A)
     {
+        int s = A.length;
+        for (int i = 1; i < s; i++)
+        {
+            int hold = A[i];
+            int j = i - 1;
+            while ((j > -1) && (A[j] > hold))
+            {
+                int temp = A[j];
+                A[j] = A[j + 1];
+                A[j + 1] = temp;
+                j--;
+            }
+        }
     }// insertionSort()
 
     // mergeSort - front-end for kick-starting the recursive algorithm
