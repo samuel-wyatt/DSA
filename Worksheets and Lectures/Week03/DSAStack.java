@@ -27,15 +27,6 @@ public class DSAStack {
 
     public boolean isEmpty() {
         boolean empty = false;
-        /*for (int i = 0; i < stack.length; i++) {
-            empty = false;
-            if (stack[i] == null) {
-                empty = true;
-            }
-        }    
-        return empty;    */
-        
-        
         if (count == 0) {
             empty = true;
         }
@@ -80,9 +71,9 @@ public class DSAStack {
         Object topVal;
         if (isEmpty()) {
             throw new ArrayIndexOutOfBoundsException("Stack is empty.");
-        } else {
+        } else { 
             topVal = stack[count - 1];
         }
         return topVal;
-    }
+    }   
 }    

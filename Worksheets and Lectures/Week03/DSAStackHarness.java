@@ -19,7 +19,7 @@ public class DSAStackHarness {
         }
         boolean exit = false;
         do {
-            System.out.println("--Methods--\n\t1. Push (Add new value)\n\t2. Pop (Remove top value)\n\t3. Top (Look at top value)\n\t4. isEmpty\n\t5. isFull\n\t6. getCount\n\t0. Exit");
+            System.out.println("--Methods--\n\t1. Push (Add new value)\n\t2. Pop (Remove top value)\n\t3. Top (Look at top value)\n\t4. isEmpty\n\t5. isFull\n\t6. getCount\n\t7. Display\n\t0. Exit");
             userIn = sc.nextInt();
             switch(userIn) {
                 case 1:
@@ -56,6 +56,9 @@ public class DSAStackHarness {
                 break;
                 case 6:
                 System.out.println(stack.getCount());
+                break;
+                case 7:
+                stack.display();
                 break;
                 case 0:
                 exit = true;

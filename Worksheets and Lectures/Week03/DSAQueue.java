@@ -1,8 +1,58 @@
 public class DSAQueue {
 
-    protected int DEFAULT_CAPACITY = 100;
-    protected int count;
-    protected Object[] queue;
+    int DEFAULT_CAPACITY = 100;
+    int count;
+    Object[] queue;
+
+    public int getCount() {
+        return 0;
+    }
+    public boolean isEmpty() {
+        return true;
+    }
+    public boolean isFull() {
+        return true;
+    }
+    public Object peek() {
+        return 0;
+    }
+    public void display() {}
+}
+
+class ShufflingQueue extends DSAQueue {
+
+    public ShufflingQueue() {
+        queue = new Object[DEFAULT_CAPACITY];
+        count = 0;
+    }
+
+    public ShufflingQueue(int maxCapacity) {
+        queue = new Object[maxCapacity];
+        count = 0;
+    }
+
+    public void enqueue(Object value) {
+        if (isFull()) {
+            throw new ArrayIndexOutOfBoundsException("Queue is full.");
+        } else {
+            queue[count] = value;
+            count += 1;
+        }
+    }
+
+    public Object dequeue() {
+        Object value = queue[0];
+        if (count == 0) {
+            throw new IndexOutOfBoundsException("Queue is empty.");
+        } else {
+            value = queue[0];
+            for (int i = 0; i < queue.length - 1; i++) {
+                queue[i] = queue[i + 1];
+            }
+            count -= 1;
+        }   
+        return value;
+    }
 
     public int getCount() {
         return this.count;
@@ -41,46 +91,10 @@ public class DSAQueue {
     }
 }
 
-class ShufflingQueue extends DSAQueue {
-
-    public ShufflingQueue() {
-        queue = new Object[DEFAULT_CAPACITY];
-        count = 0;
-    }
-
-    public ShufflingQueue(int maxCapacity) {
-        queue = new Object[maxCapacity];
-        count = 0;
-    }
-
-    public void enqueue(Object value) {
-        if (isFull()) {
-            throw new ArrayIndexOutOfBoundsException("Queue is full.");
-        } else {
-            queue[count] = value;
-            count += 1;
-        }
-    }
-
-    public Object dequeue() {
-        Object value = queue[0];
-        if (count < 1) {
-            throw new IndexOutOfBoundsException("Queue is empty.");
-        } else {
-            value = queue[0];
-            for (int i = 0; i < queue.length - 1; i++) {
-                queue[i] = queue[i + 1];
-            }
-            count -= 1;
-        }   
-        return value;
-    }
-}
-
 class CircularQueue extends DSAQueue {
 
-    int front = -1;
-    int back = -1;
+    private int front = -1;
+    private int back = -1;
     
     public CircularQueue() {
         queue = new Object[DEFAULT_CAPACITY];
@@ -119,8 +133,12 @@ class CircularQueue extends DSAQueue {
                 front = (front + 1) % queue.length;
             }
         }
-        count = front + 1;
+        count += 1;
         return value;
+    }
+
+    public int getCount() {
+        return this.count;
     }
 
     public boolean isEmpty() {
@@ -137,5 +155,13 @@ class CircularQueue extends DSAQueue {
         } else {
             return queue[front];
         }
+    }
+
+    public void display() {
+        System.out.println("________Queue Content________");
+        for (int i = 0; i < queue.length; i++) {
+            System.out.print("\t" + queue[i]);
+        }
+        System.out.println("\n_____________________________");
     }
 }
