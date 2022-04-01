@@ -1,12 +1,36 @@
-import java.util.*;
 public class EquationSolverTest {
     public static void main(String args[]) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Please enter the equation, with spaces between each character.");
-        String equation = sc.nextLine();
-        EquationSolver solver = new EquationSolver();
-        double solvedEquation = solver.solve(equation);
-        System.out.println("Solved: " + solvedEquation);
-        sc.close();
+        EquationSolver s = new EquationSolver();
+        //Simple equation
+        System.out.println(s.solve("6 + 2"));//8
+        System.out.println(s.solve("6 - 2"));//4
+        System.out.println(s.solve("6 * 2"));//12
+        System.out.println(s.solve("6 / 2"));//3
+
+        //Addition first
+        System.out.println(s.solve("6 + 2 + 2"));//10 
+        System.out.println(s.solve("6 + 2 - 2"));//6
+        System.out.println(s.solve("6 + 2 * 2"));//10
+        System.out.println(s.solve("6 + 2 / 2"));//7
+
+        //Subtraction first.
+        System.out.println(s.solve("6 - 2 + 2"));//6
+        System.out.println(s.solve("6 - 2 - 2"));//2
+        System.out.println(s.solve("6 - 2 * 2"));//2
+        System.out.println(s.solve("6 - 2 / 2"));//5
+
+        //Multiplication first.
+        System.out.println(s.solve("6 * 2 + 2"));//14
+        System.out.println(s.solve("6 * 2 - 2"));//10
+        System.out.println(s.solve("6 * 2 * 2"));//24
+        System.out.println(s.solve("6 * 2 / 2"));//6
+
+        //Division first.
+        System.out.println(s.solve("6 / 2 + 2"));//5
+        System.out.println(s.solve("6 / 2 - 2"));//1
+        System.out.println(s.solve("6 / 2 * 2"));//6
+        System.out.println(s.solve("6 / 2 / 2"));//1.5
+
+        System.out.println(s.solve("( 10.3 * ( 14 + 3.2 ) ) / ( 5 + 2 - 4 * 3 )"));
     }
 }

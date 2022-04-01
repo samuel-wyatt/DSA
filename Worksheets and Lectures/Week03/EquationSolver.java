@@ -7,18 +7,16 @@ public class EquationSolver {
 
     private ShufflingQueue parseInfixToPostfix(String equation) {
         //Create a string array containing the equation.
-        char[] tokens = equation.split(" ");
+        String tokens[] = equation.split(" ");
        
         //Create a stack of the length of the string array
         DSAStack stack = new DSAStack(tokens.length);
         
         //Create a shuffling queue of the length of the string array.
         ShufflingQueue queue = new ShufflingQueue(tokens.length);
-        
+
         //For loop iterates through each value of the equation.
         for (int i = 0; i < tokens.length; i++) {
-        System.out.println("count = " + stack.getCount());
-
             //Create a string using the value at the element i.
             String x = tokens[i];
 
@@ -28,15 +26,22 @@ public class EquationSolver {
                 stack.push(x);
             
             //Checks if x is a operator.
-            } else if (precedenceOf(x) > 0) {
-                if (!(stack.isEmpty())) { 
-                    while (precedenceOf((String)stack.top()) >= precedenceOf(x)) {
-                        queue.enqueue(stack.pop());
-                    }
+            } else if (precedenceOf(x.charAt(0)) > 0) {
+                if (!stack.isEmpty()) {
+                    boolean exit;
+                    do {
+                        if (stack.isEmpty()) {
+                            exit = true;
+                        } else {
+                            if (precedenceOf(stack.top().toString().charAt(0)) >= precedenceOf(x.charAt(0))) {
+                                queue.enqueue(stack.pop());
+                                exit = false;
+                            }
+                        }
+                    } while (exit = false);
                 }
                 //Enqueue's the value on the top of the stack, while the precedence of the operator on the stack is greater than or equal to the precedence of x.
                 stack.push(x);
-
             //Checks if x is a closing bracket.
             } else if (x.equals(")")) {
                 
@@ -52,7 +57,7 @@ public class EquationSolver {
             }
         //Enqueues the operators on the stack until it is empty
         } while (!stack.isEmpty()) {
-            queue.enqueue(stack.pop());
+            queue.enqueue(((String)stack.pop()).charAt(0));
         }
         return queue;
     }
@@ -68,10 +73,10 @@ public class EquationSolver {
             //Creates a string variable containing the value on the queue.
             String x = String.valueOf(postfixQueue.dequeue());
             //Checks if x is an operator.
-            if (precedenceOf(x) > 0) {
+            if (precedenceOf(x.charAt(0)) > 0) {
                 //Creates two double variables from the last two variables on the stack.
-                double op2 = Double.parseDouble((String)operandStack.pop());
-                double op1 = Double.parseDouble((String)operandStack.pop());
+                double op2 = Double.valueOf(operandStack.pop().toString());
+                double op1 = Double.valueOf(operandStack.pop().toString());
                 
                 //Calls the executeOperation function, which returns the result depending on the operator.
                 //Adds this value to the stack.
@@ -97,9 +102,6 @@ public class EquationSolver {
 
 
     private double executeOperation(String op, double op1, double op2) {
-        
-        System.out.println("op = " + op + ", op1 and op2 = " + op1 + ", " + op2);
-
         double answer = 0;
         switch(op) {
             case "+":   answer = op1 + op2;
