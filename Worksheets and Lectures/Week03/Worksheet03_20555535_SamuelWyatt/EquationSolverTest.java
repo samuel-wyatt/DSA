@@ -32,5 +32,6 @@ public class EquationSolverTest {
         System.out.println(s.solve("6 / 2 / 2"));//1.5
 
         System.out.println(s.solve("( 10.3 * ( 14 + 3.2 ) ) / ( 5 + 2 - 4 * 3 )"));
+        System.out.println(s.solve("( ( 2 - 3 ) / 4 * ( 1 + 9 ) ) * 2"));
     }
 }

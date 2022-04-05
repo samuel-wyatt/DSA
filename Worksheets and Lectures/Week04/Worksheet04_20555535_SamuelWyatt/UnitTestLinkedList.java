@@ -64,12 +64,13 @@ public class UnitTestLinkedList
         } catch(Exception e) { System.out.println("FAILED"); }
 
         // TEST 4 : REMOVE FIRST
+        System.out.println("CURRENT LL : " + ll.toString());
         try {
             iNumTests++;
             System.out.print("Testing removeFirst(): ");
-            sTestString = (String)ll.removeFirst();
-            if (sTestString != "xyz")
-                throw new IllegalArgumentException("FAILED.");
+            //sTestString = (String)ll.removeFirst();
+        //    if (sTestString != "xyz")
+         //       throw new IllegalArgumentException("FAILED.");
             sTestString = (String)ll.removeFirst();
             if (sTestString != "jkl")
                 throw new IllegalArgumentException("FAILED.");

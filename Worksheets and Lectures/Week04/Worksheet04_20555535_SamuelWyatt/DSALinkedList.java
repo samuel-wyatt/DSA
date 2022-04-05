@@ -42,36 +42,57 @@ public class DSALinkedList {
     private DSAListNode tail;
 
     public DSALinkedList() {
-        head = null;
+        this.head = null;
+        this.tail = null;
+        this.counter = 0;
     }
 
     void insertFirst(Object newValue) {
-
         DSAListNode newNd = new DSAListNode(newValue);
-        DSAListNode currNd = head;
         if (isEmpty()) {
             head = newNd;
             tail = newNd;
         } else {
-            currNd.setPrev(newNd);
-            newNd.setNext(currNd);
-            head.setNext(newNd);
+            newNd.setNext(head);
+            newNd.setPrev(null);
+            head.setPrev(newNd);
+            head = newNd;
         }
         incrementCounter();
     }
 
-    void insertLast(Object newValue) {
-
+    void insertBefore(Object newValue, Object beforeValue) {
         DSAListNode newNd = new DSAListNode(newValue);
-        DSAListNode currNd = tail;
+        DSAListNode currNd = head;
+        boolean exit = false;
+        if (isEmpty()) {
+            head = null;
+            tail = null;
+        } else if (head.getValue() == beforeValue) {
+            insertFirst(newValue);
+        } else {
+            while (currNd.getNext() != null && !exit) {
+                if (currNd.getNext().getValue() == beforeValue) {
+                    newNd.setNext(currNd.getNext());
+                    currNd.setNext(newNd);
+                    newNd.setPrev(currNd);
+                    currNd.getNext().setPrev(currNd);
+                    exit = true;
+                }
+            }
+        }
+    }
 
+    void insertLast(Object newValue) {
+        DSAListNode newNd = new DSAListNode(newValue);
         if (isEmpty()) {
             head = newNd;
             tail = newNd;
         } else {
-            currNd.setNext(newNd);
-            newNd.setPrev(currNd);
+            newNd.setPrev(tail);
+            newNd.setNext(null);
             tail.setNext(newNd);
+            tail = newNd;
         }
         incrementCounter();
     }
@@ -114,6 +135,25 @@ public class DSALinkedList {
        return nodeValue;
     }
 
+    Object peek(Object inValue) {
+        DSAListNode currNd = head;
+        Object nodeValue = null;;
+        boolean exit = false;
+        if (isEmpty()) {
+            nodeValue = null;
+        } else if (head.getValue() == inValue) {
+            nodeValue = head.getValue();
+        } else {
+            while (currNd.getNext() != null && !exit) {
+                if (currNd.getNext().getValue() == inValue) {
+                    nodeValue = currNd.getNext().getValue();
+                }
+                exit = true;
+            }
+        }
+        return nodeValue;
+    }
+
     Object peekLast() {
         Object nodeValue;
         if (isEmpty()) {
@@ -125,37 +165,71 @@ public class DSALinkedList {
     }
 
     Object removeFirst() {
-        Object nodeValue;
+        Object nodeValue = null;
         if (isEmpty()) {
             return null;
+        } else if (head.getNext() == null) {
+            head = null;
+            tail = null;
+            decrementCounter();
         } else {
+            DSAListNode headNode = head.getNext();
             nodeValue = head.getValue();
-            head.setNext(head.getNext());
+            head.setNext(null);
+            head = headNode;
             head.setPrev(null);
+            decrementCounter();
         }
-        decrementCounter();
         return nodeValue;
     }
 
+//    Object remove(Object inValue) {
+        //!!!!!!!!!!!!
+//    }
+
     Object removeLast() {
-        Object nodeValue;
+        Object nodeValue = null;
         if (isEmpty()) {
             return null;
+        } else if (tail.getPrev() == null) {
+            head = null;
+            tail = null;
+            decrementCounter();
         } else {
+            DSAListNode tailNode = tail.getPrev();
             nodeValue = tail.getValue();
-            tail.setPrev(tail.getPrev());
             tail.setPrev(null);
+            tail = tailNode;
+            tail.setNext(null);
+            decrementCounter();
         }
-
-        decrementCounter();
         return nodeValue;
     } 
+
+    boolean find(Object inValue) {
+        DSAListNode currNd = head;
+        boolean found = false;
+        boolean exit = false;
+        if (isEmpty()) {
+            throw new IndexOutOfBoundsException("The LinkedList is empty");
+        } else if (head.getValue() == inValue) {
+            found = true;
+        } else {
+            while (currNd.getNext() != null && !exit) {
+                if (currNd.getNext().getValue() == inValue) {
+                    found = true;
+                }
+                exit = true;
+            }
+        }
+        return found;
+   }
 
     public String toString() {
         String output = "";
 
-        if (isEmpty()) {
-            DSAListNode currNd = head.getNext();
+        if (!isEmpty()) {
+            DSAListNode currNd = head;
             while (currNd != null) {
                 output += "[" + currNd.getValue().toString() + "]";
                 currNd = currNd.getNext();

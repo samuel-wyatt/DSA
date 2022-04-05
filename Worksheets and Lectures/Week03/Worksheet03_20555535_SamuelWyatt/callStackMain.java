@@ -5,9 +5,10 @@ public class callStackMain {
         Scanner sc = new Scanner(System.in);
         System.out.println("1. calcNFactorial (I)\n2. calcNFactorial (R)\n3. fibIterative\n4. fibRecursive\n5. greatestComDenom");
         int usrIn = Integer.parseInt(sc.nextLine().trim());
+        sc.close();
         switch (usrIn) {
-            case 1:  calcNFactorial(10, s); break;
-            case 2:  calcNFactorialRecursive(10, s); break;
+            case 1:  calcNFactorial(5, s); break;
+            case 2:  calcNFactorialRecursive(5, s); break;
             case 3:  fibIterative(15, s); break;
             case 4:  fibRecursive(15, s); break;
             case 5:  greatestComDenom(160, 76, s); break;
@@ -24,6 +25,7 @@ public class callStackMain {
             nFactorial *= i;
         }
         s.pop();
+        s.display();
         return nFactorial;
     }
 
@@ -39,6 +41,7 @@ public class callStackMain {
             a = n * calcNFactorialRecursive(n - 1, s);
         }
         s.pop();
+        s.display();
         return a;
     }
 
@@ -64,6 +67,7 @@ public class callStackMain {
             }
         }
         s.pop();
+        s.display();
         return fibVal;
     }
     
@@ -81,6 +85,7 @@ public class callStackMain {
             fibVal = fibRecursive(n - 1, s) + fibRecursive(n - 2, s);
         }
         s.pop();
+        s.display();
         return fibVal;
     }
 
@@ -98,6 +103,7 @@ public class callStackMain {
             a = n1;
         }
         s.pop();
+        s.display();
         return a;
     }
 }
