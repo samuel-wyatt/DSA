@@ -1,7 +1,15 @@
 public class TestDSALinkedList {
     public static void main(String args[]) {
         DSALinkedList l = new DSALinkedList();
+        //Testing isEmpty()
+        System.out.print("Testing isEmpty() : ");
+        if (l.isEmpty() == true) {
+            System.out.println("passed");
+        } else {
+            System.out.println("failed");
+        }
         
+
         //Testing insertFirst()
         try {
             System.out.print("Testing insertFirst() : ");
@@ -66,6 +74,7 @@ public class TestDSALinkedList {
             }
         } catch (Exception e) {}
 
+        //Testing removeFirst
         DSALinkedList ll = new DSALinkedList();
         System.out.println("_____________________________________________________");
         System.out.println("Testing removeFirst()");
@@ -87,12 +96,13 @@ public class TestDSALinkedList {
         ll.removeFirst();
         System.out.println(ll.toString() + " + Count = " + ll.size());
         ll.removeFirst();
-        System.out.println(ll.toString() + " + Count = " + ll.size());
+        System.out.println(ll.toString()  + " + Count = " + ll.size());
         ll.removeFirst();
         System.out.println(ll.toString() + " + Count = " + ll.size());
         ll.removeFirst();
         System.out.println(ll.toString() + " + Count = " + ll.size());
 
+        //Testing removeLast()
         System.out.println("_____________________________________________________");
         System.out.println("Testing removeLast()");
         System.out.println("_____________________________________________________");
@@ -119,23 +129,33 @@ public class TestDSALinkedList {
         ll.removeLast();
         System.out.println(ll.toString() + " + Count = " + ll.size());
 
-        //Testing insertBefore()
-        System.out.println("_____________________________________________________");
-        System.out.println("Testing insertNext()");
+        //Testing insertBefore()        
+        /*System.out.println("_____________________________________________________");
+        System.out.println("Testing insertBefore()");
         System.out.println("_____________________________________________________");
         ll.insertFirst(30);
         ll.insertFirst(20);
         ll.insertFirst(10);
-        System.out.println("Before insertNext() : " + ll.toString());
+        System.out.println("Before insertBefore() : " + ll.toString());
+        try {
         ll.insertBefore(15, 20);
-        System.out.println("After insertNext() : " + ll.toString());
+        } catch (Exception e1) {
+            System.out.println("failed");
+        }
 
-        //Testing peek()
+        try {
+            ll.insertBefore(20, 100);
+        } catch (Exception e2) {}
+
+        System.out.println("After insertBefore()) : " + ll.toString());
+*/
+        //Testing find()
+        ll.insertFirst(15);
         System.out.println("_____________________________________________________");
-        System.out.println("Testing peek()");
+        System.out.println("Testing find()");
         System.out.println("_____________________________________________________");
-        System.out.println(ll.peek(100));
-        System.out.println(ll.peek(15));
+        System.out.println("100 =  "  + ll.find(100));
+        System.out.println("15 = " + ll.find(15));
 
         
 
