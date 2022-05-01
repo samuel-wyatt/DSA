@@ -95,31 +95,6 @@ public class DSALinkedList implements Iterable, Serializable {
         incrementCounter();
     }
 
-/*    void insertBefore(Object newValue, Object beforeValue) {
-        DSAListNode newNd = new DSAListNode(newValue);
-        DSAListNode currNd = head;
-        boolean exit = false;
-        if (isEmpty()) {
-            head = null;
-            tail = null;
-        } else if (head.getValue() == beforeValue) {
-            insertFirst(newValue);
-        } else {
-            if (currNd.getNext() == null) {
-                throw new IllegalArgumentException("No such value in linked list.");
-            }
-            while (currNd.getNext() != null || !exit) {
-                if (currNd.getNext().getValue() == beforeValue) {
-                    newNd.setNext(currNd.getNext());
-                    currNd.setNext(newNd);
-                    newNd.setPrev(currNd);
-                    currNd.getNext().setPrev(currNd);
-                    exit = true;
-                }         
-            }
-        }
-    } */
-
     void insertLast(Object newValue) {
         DSAListNode newNd = new DSAListNode(newValue);
         if (isEmpty()) {
@@ -172,25 +147,6 @@ public class DSALinkedList implements Iterable, Serializable {
        return nodeValue;
     }
 
-    /*Object peek(Object inValue) {
-        DSAListNode currNd = head;
-        Object nodeValue = null;;
-        boolean exit = false;
-        if (isEmpty()) {
-            nodeValue = null;
-        } else if (head.getValue() == inValue) {
-            nodeValue = head.getValue();
-        } else {
-            while (currNd.getNext() != null && !exit) {
-                if (currNd.getNext().getValue() == inValue) {
-                    nodeValue = currNd.getNext().getValue();
-                }
-                exit = true;
-            }
-        }
-        return nodeValue;
-    } */
-
     Object peekLast() {
         Object nodeValue;
         if (isEmpty()) {
@@ -219,27 +175,7 @@ public class DSALinkedList implements Iterable, Serializable {
         }
         return nodeValue;
     }
-
-    /*Object remove(Object inValue) {
-        DSAListNode currNd = head;
-        Object nodeValue;
-        if (head.getValue() == inValue) {
-            nodeValue = removeFirst();
-        } else if (tail.getValue() == inValue) {
-            nodeValue = removeLast();
-        } else {
-            while (currNd.getValue() != inValue) {
-                currNd = currNd.getNext();
-            }
-            nodeValue = currNd.getValue();
-            currNd.getPrev().setNext(currNd.getNext());  
-            currNd.getNext().setPrev(currNd.getPrev());
-            currNd.setNext(null);
-            currNd.setPrev(null);
-        }
-        return nodeValue;
-    } */
-
+    
     Object removeLast() {
         Object nodeValue = null;
         if (isEmpty()) {

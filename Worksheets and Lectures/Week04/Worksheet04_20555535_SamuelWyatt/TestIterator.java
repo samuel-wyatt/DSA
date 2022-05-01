@@ -8,7 +8,17 @@ public class TestIterator {
         ll.insertFirst("third");
         ll.insertFirst("fourth");
 
+        Object value;
+        Iterator iter = ll.iterator();
+        while (iter.hasNext()) {
+            value = iter.next();
+            System.out.println(value);
+        }
 
-        } 
-    }
+        try {
+            iter.remove();
+        } catch (UnsupportedOperationException e) {
+            System.out.println("ERROR : " + e.getMessage());
+        }
+    } 
 }
