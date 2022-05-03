@@ -84,7 +84,7 @@ public class DSABinarySearchTree implements Serializable {
     //delete() method/s
     public DSATreeNode delete(int key) { return deleteRec(key, root); }
 
-    public DSATreeNode deleteRec(int key, DSATreeNode currNd) {
+    private DSATreeNode deleteRec(int key, DSATreeNode currNd) {
         DSATreeNode updateNode = currNd;
         if (currNd == null) {
             throw new  NoSuchElementException("Key does not exist.");
@@ -98,7 +98,7 @@ public class DSABinarySearchTree implements Serializable {
         return updateNode;
     }
 
-    public DSATreeNode deleteNode(int key, DSATreeNode delNode) {
+    private DSATreeNode deleteNode(int key, DSATreeNode delNode) {
         DSATreeNode updateNode = null;
         if (delNode.getLeft() == null && delNode.getRight() == null) {
             updateNode = null;
@@ -116,7 +116,7 @@ public class DSABinarySearchTree implements Serializable {
         return updateNode;
     }
 
-    public DSATreeNode promoteSuccessor(DSATreeNode currNd) {
+    private DSATreeNode promoteSuccessor(DSATreeNode currNd) {
         DSATreeNode successor = currNd;
         if (currNd.getLeft() == null) {
             successor = currNd;
@@ -206,9 +206,32 @@ public class DSABinarySearchTree implements Serializable {
     }
 
     //balance() method
-   //public double balance() { return balanceRec(root); }
+   public double balance() { return balanceRec(root); }
 
-   //public double balanceRec(DSATreeNode currNd) {
+   private double balanceRec(DSATreeNode currNd) {
+        double balance = 100, leftHeight, rightHeight, totalHeight;
+        leftHeight = heightRec(currNd.getLeft());
+        rightHeight = heightRec(currNd.getRight());
+        totalHeight = height();
+        
+        if (leftHeight == rightHeight) {
+            balance = 100;
+        } else if ((leftHeight < rightHeight)) {
+            if (rightHeight - leftHeight > 1) {
+                balance = (totalHeight / (rightHeight - leftHeight) * 100) - 100;
+            } else {
+                balance = 100;
+            }
+        } else {
+            if ((leftHeight - rightHeight) > 1) {
+                balance = (totalHeight / (leftHeight - rightHeight) * 100) - 100; 
+            } else {
+                balance = 100;
+            }
+        }
+
+        return balance;
+   }
 
     //inorder() method
     public DSALinkedList inorder() { 

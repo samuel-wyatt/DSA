@@ -14,6 +14,7 @@ public class interactiveMenu implements Serializable {
             switch (userIn) {
                 case 1:
                     tree = readCSV();
+                    System.out.println("Success");
                 break;
                 case 2:
                     System.out.print("Name: ");
@@ -61,13 +62,13 @@ public class interactiveMenu implements Serializable {
 
     public static DSABinarySearchTree readCSV() {
         String fileName;
-        String line, delimiter = ",";
-        String[] tree = {};
+        String line = "", delimiter = ",";
+        int i = 0;
+        String[] tree = new String[100];
         
         Scanner sc = new Scanner(System.in);
         System.out.print("File Name : ");
         fileName = sc.nextLine().trim();
-        sc.nextLine();
 
         try {
 
@@ -82,15 +83,15 @@ public class interactiveMenu implements Serializable {
             
             while ((line = bufRdr.readLine()) != null) {
                 tree = line.split(delimiter);
+                i++;
             }
             fileStream.close();
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
         }
-        sc.close();
         
         DSABinarySearchTree BST = new DSABinarySearchTree();
-        for (int i = 0; i < tree.length; i++) {
+        for (i = 0; i < tree.length; i++) {
             int key = Integer.parseInt(tree[i]);
             BST.insert(key, "");
         }
@@ -107,12 +108,14 @@ public class interactiveMenu implements Serializable {
             DSALinkedList ll = new DSALinkedList();
             BufferedWriter br;
             FileWriter fw;
-            
+            String csv, split = ",";
+            StringBuilder csvBuilder = new StringBuilder();
+
             fw = new FileWriter(fileName + ".csv");
             br = new BufferedWriter(fw);
             
             System.out.println("Save BST as: ");
-            System.out.println("1. in-order\n2. pre-order\n3.post-order");
+            System.out.println("1. in-order\n2. pre-order\n3. post-order");
             switch (Integer.parseInt(sc.nextLine().trim())) {
                 case 1:
                     ll = BST.inorder();
@@ -127,15 +130,19 @@ public class interactiveMenu implements Serializable {
 
             Iterator iter = ll.iterator();
             while (iter.hasNext()) {
-                br.write((Integer)iter.next());
-                br.write(",");
+                csvBuilder.append(String.valueOf(iter.next()));
+                csvBuilder.append(split);
             }
+            csv = csvBuilder.toString();
+            csv = csv.substring(0, csv.length() - split.length());
+            
+            br.write(csv);
+
             br.close();
             fw.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        sc.close();
     }
 
     public static void displayTree(DSABinarySearchTree tree) {
@@ -191,7 +198,7 @@ public class interactiveMenu implements Serializable {
                     System.out.println("Height: " + tree.height() + "\n"); 
                 break;
                 case 5:
-                    //System.out.println(tree.balance());
+                    System.out.println(tree.balance() + "%");
                 case 0:
                 break;
                 default:

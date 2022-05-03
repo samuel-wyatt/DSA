@@ -1,6 +1,18 @@
-public class DSALinkedList {
+/**********************************************************
+ * Author: Samuel Wyatt (20555535)                        *
+ * Date: 01/04/2021                                       *
+ * File Name: DSALinkedList                               *
+ * Purpose: To create a class to imitate a LinkedList.    *
+ **********************************************************/
+import java.io.*;
+import java.util.*;
+public class DSALinkedList implements Iterable, Serializable {
    
-    private class DSAListNode {
+    public Iterator iterator() {
+        return new DSALinkedListIterator(this);
+    }
+
+    private class DSAListNode implements Serializable {
         
         private Object value;
         private DSAListNode next;
@@ -14,10 +26,6 @@ public class DSALinkedList {
         
         Object getValue() {
             return this.value;
-        }
-
-        void setValue(Object newValue) {
-            value = newValue;
         }
 
         DSAListNode getNext() {
@@ -37,14 +45,40 @@ public class DSALinkedList {
         }
     }
 
-    private static int counter;
+    private class DSALinkedListIterator implements Iterator {
+        private DSAListNode iterNext;
+        public DSALinkedListIterator(DSALinkedList theList) {
+            iterNext = theList.head;
+        }
+        
+        public boolean hasNext() {
+            return (iterNext != null);
+        }
+
+        public Object next() {
+            Object value;
+            if (iterNext == null) {
+                value = null;
+            } else {
+                value = iterNext.getValue();
+                iterNext = iterNext.getNext();
+            }
+            return value;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException("Not Supported");
+        }
+    }
+
+    private int counter;
     private DSAListNode head;
     private DSAListNode tail;
 
     public DSALinkedList() {
         this.head = null;
         this.tail = null;
-        this.counter = 0;
+        counter = 0;
     }
 
     void insertFirst(Object newValue) {
@@ -59,28 +93,6 @@ public class DSALinkedList {
             head = newNd;
         }
         incrementCounter();
-    }
-
-    void insertBefore(Object newValue, Object beforeValue) {
-        DSAListNode newNd = new DSAListNode(newValue);
-        DSAListNode currNd = head;
-        boolean exit = false;
-        if (isEmpty()) {
-            head = null;
-            tail = null;
-        } else if (head.getValue() == beforeValue) {
-            insertFirst(newValue);
-        } else {
-            while (currNd.getNext() != null && !exit) {
-                if (currNd.getNext().getValue() == beforeValue) {
-                    newNd.setNext(currNd.getNext());
-                    currNd.setNext(newNd);
-                    newNd.setPrev(currNd);
-                    currNd.getNext().setPrev(currNd);
-                    exit = true;
-                }
-            }
-        }
     }
 
     void insertLast(Object newValue) {
@@ -109,7 +121,7 @@ public class DSALinkedList {
         return empty;
     }
 
-    private static void incrementCounter() {
+    private void incrementCounter() {
         counter++;
     }
 
@@ -117,7 +129,7 @@ public class DSALinkedList {
         counter--;
     }
 
-    private static int getCounter() {
+    private int getCounter() {
         return counter;
     }
 
@@ -133,25 +145,6 @@ public class DSALinkedList {
         nodeValue = head.getValue();
        }
        return nodeValue;
-    }
-
-    Object peek(Object inValue) {
-        DSAListNode currNd = head;
-        Object nodeValue = null;;
-        boolean exit = false;
-        if (isEmpty()) {
-            nodeValue = null;
-        } else if (head.getValue() == inValue) {
-            nodeValue = head.getValue();
-        } else {
-            while (currNd.getNext() != null && !exit) {
-                if (currNd.getNext().getValue() == inValue) {
-                    nodeValue = currNd.getNext().getValue();
-                }
-                exit = true;
-            }
-        }
-        return nodeValue;
     }
 
     Object peekLast() {
@@ -182,11 +175,7 @@ public class DSALinkedList {
         }
         return nodeValue;
     }
-
-//    Object remove(Object inValue) {
-        //!!!!!!!!!!!!
-//    }
-
+    
     Object removeLast() {
         Object nodeValue = null;
         if (isEmpty()) {

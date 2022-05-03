@@ -128,7 +128,7 @@ public class DSABinarySearchTreeHarness {
         }
 
         //balance()
-        /*try {
+        try {
             System.out.print("Balance : ");
             System.out.println(tree.balance());
         } catch (Exception e) {
@@ -138,12 +138,27 @@ public class DSABinarySearchTreeHarness {
         empty.insert(3, 3);
         empty.insert(4, 4);
         empty.insert(1, 1);
+        empty.insert(5, 5);
+        
+        empty.insert(6, 6); 
+        empty.insert(7, 7); 
+        
+        empty.insert(8, 8); 
+        empty.insert(9, 8);
+        empty.insert(10, 8); 
+        empty.insert(11, 8); 
+        empty.insert(12, 8); 
+        empty.insert(13, 8); 
+        empty.insert(14, 8); 
+        empty.insert(15, 8); 
+        
+
         try {
             System.out.print("Balance : ");
             System.out.println(empty.balance());
         } catch (Exception e) {
             System.out.println("failed");
-        }*/
+        }
 
         //inorder()
         try {
