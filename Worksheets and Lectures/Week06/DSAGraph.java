@@ -69,6 +69,7 @@ public class DSAGraph {
     //addEdge
     public void addEdge(String inLabel1, String inLabel2) {
         boolean exit = false;
+        boolean add = false;
 
         //Initialise iterator
         Iterator iter = vertices.iterator();
@@ -89,7 +90,7 @@ public class DSAGraph {
                 } else if (v.getLabel().equals(inLabel2)) {
                     v.addEdge(vertex1);
                     exit = true;
-                }    
+                }
             }
         }
     }
@@ -152,6 +153,8 @@ public class DSAGraph {
             if (v.getLabel().equals(inLabel)) {
                 ll = v.getAdjacent();
                 exit = true;
+            } else {
+                throw new NoSuchElementException("No vertex found");
             }
         }
         return ll;

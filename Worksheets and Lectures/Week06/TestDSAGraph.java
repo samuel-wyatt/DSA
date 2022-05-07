@@ -1,3 +1,5 @@
+import java.util.Iterator;
+
 public class TestDSAGraph {
    public static void main(String args[]) {
        testFunc();
@@ -5,28 +7,148 @@ public class TestDSAGraph {
 
    public static void testFunc() {
        DSAGraph graph = new DSAGraph();
-       graph.addVertex("1", "one");
-       graph.addVertex("2", "two");
-       graph.addVertex("3", "three");
-       graph.addVertex("4", "four");
-       graph.addVertex("5", "five");
+       int count = 0;
+       //addVertex(valid values)
+       System.out.print("Testing addVertex(valid label, valid value) : ");
+       try { 
+            graph.addVertex("A", "A");
+            graph.addVertex("B", "B");
+            graph.addVertex("C", "C");
+            graph.addVertex("D", "D");
+            System.out.println("passed");
+            count++;
+       } catch (Exception e) {
+           System.out.println("failed");
+       }
 
-       graph.addEdge("1", "2");
-       graph.addEdge("1", "3");
-       graph.addEdge("1", "5");
-       graph.addEdge("2", "4");
-       graph.addEdge("2", "5");
-       graph.addEdge("3", "4");
-       graph.addEdge("3", "5");
-       graph.addEdge("4", "5");
+        //addEdge(valid values)
+        System.out.print("\nTesting addEdge(valid label1, valid label2) : ");
+        try {
+            graph.addEdge("A", "B");
+            graph.addEdge("B", "C");
+            graph.addEdge("C", "D");
+            graph.addEdge("D", "A");
+            System.out.println("passed");
+            count++;
+        } catch (Exception e) {
+            System.out.println("failed");
+        }
 
+       //addEdge(invalid label1 and 2)
+       System.out.print("\nTesting addEdge(invalid labels) : ");
+       try {
+           graph.addEdge("AA", "BB");
+           System.out.println("failed");
+       } catch (Exception e) {
+           System.out.println("passed");
+           count++;
+       }
+
+       //getVertexCount()
+       System.out.print("\nTesting getVertexCount() : ");
+       try {
+           if (graph.getVertexCount() == 4) {
+               System.out.println("passed");
+               count++;
+           } else {
+               System.out.println("failed");
+           }
+       } catch (Exception e) {
+           System.out.println("failed");
+       }
+
+       //getEdgeCount
+       System.out.print("\nTesting getEdgeCount() : ");
+       try {
+        if (graph.getVertexCount() == 4) {
+            System.out.println("passed");
+            count++;
+        } else {
+            System.out.println("failed");
+        }
+    } catch (Exception e) {
+        System.out.println("failed");
+    }
+
+       //getVertex(valid label)
+        System.out.print("\nTesting getVertex(valid label) : ");
+        try {
+            Object vertex = graph.getVertex("A");
+            System.out.println("passed");
+            count++;
+        } catch (Exception e) {
+            System.out.println("failed");
+        }
+
+       //getVertex(invalid label)
+        System.out.print("\nTesting getVertex(invalid label) : ");
+        try {
+            Object vertex = graph.getVertex("G");
+            System.out.println("failed");
+        } catch (Exception e) {
+            System.out.println("passed");
+            count++;
+        }
+
+       //getAdjacent(valid label)
+       System.out.print("\nTesting getAdjacent(valid label) : ");
+       DSALinkedList ll = new DSALinkedList();
+       try {
+           ll = graph.getAdjacent("A");
+            System.out.println("passed");
+            count++;
+        } catch (Exception e) {
+            System.out.println("failed :" + e.getMessage());
+       }
+
+       //getAdjacent(invalid label)
+       System.out.print("\nTesting getAdjacent(invalid label) : ");
+       DSALinkedList l = new DSALinkedList();
+       try {
+            l = graph.getAdjacent("G");
+            System.out.println("failed");
+        } catch (Exception e) {
+            System.out.println("passed");
+            count++;
+       }
+
+       //isAdjacent(valid value)
+       System.out.print("\nTesting isAdjacent(valid label) : ");
+       try {
+        if (graph.isAdjacent("A", "B") == true) {
+             System.out.println("passed");
+             count++;
+        } else {
+            System.out.println("failed");
+        }
+    } catch (Exception e) {
+        System.out.println("failed");
+    }
+
+       //isAdjacent(invalid label 1 and 2)
+       System.out.print("\nTesting isAdjacent(invalid labels) : ");
+       try {
+           if (graph.isAdjacent("AA", "BB") == false) {
+                System.out.println("passed");
+                count++;
+           } else {
+               System.out.println("failed");
+           }
+       } catch (Exception e) {
+           System.out.println("failed");
+       }
+
+       //displayAsList()
+       System.out.println();
        graph.displayAsList();
-
-       System.out.println("E: " + graph.getEdgeCount());
-       System.out.println("V: " + graph.getVertexCount());
-
-       System.out.println(graph.isAdjacent("1", "2"));
-       System.out.println(graph.isAdjacent("4", "5"));
        
+       //displayAsMatrix()
+       System.out.println();
+       //graph.displayAsMatrix();
+    
+       System.out.println(count + "/15");
+
+       double percentage = ((double)count / 15.0) * 100.0;
+       System.out.println(percentage + "%");
    }
 }
