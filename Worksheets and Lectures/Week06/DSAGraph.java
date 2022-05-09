@@ -67,29 +67,44 @@ public class DSAGraph {
     }
 
     //addEdge
-    public void addEdge(String inLabel1, String inLabel2) {
-        boolean exit = false;
-        boolean add = false;
+    public void addEdge(String src, String dest) {
+        boolean exit = false, exit2 = false;
 
-        //Initialise iterator
+        //Initialise iterators
         Iterator iter = vertices.iterator();
+        Iterator iter2 = vertices.iterator();
 
-        //Initialise two new DSAGraphVertex, to be inserted into the vertexList of the corrosponding vertex
-        DSAGraphVertex vertex1 = new DSAGraphVertex(inLabel1, null);
-        DSAGraphVertex vertex2 = new DSAGraphVertex(inLabel2, null);
-
-        //Find each vertex, and insert the 'opposite' label
+        //Check if there 2 or more vertices.
         if (vertices.size() < 2) {
             throw new NoSuchElementException("There are less than 2 vertices");
         } else {
+            //While loop to iterate over vertices list
             while (iter.hasNext() || exit != true) {
+                //Creates a temp vertex of the current node
                 DSAGraphVertex v = (DSAGraphVertex)iter.next();
-                if (v.getLabel().equals(inLabel1)) {
-                    v.addEdge(vertex2);
+                //Checks if the temp vertex is equal to the destination label
+                if (v.getLabel().equals(dest)) {
+                    //If true, create a new vertex with the label and value from the vertex.
+                    DSAGraphVertex newEdge = new DSAGraphVertex(v.getLabel(), v.getValue());
                     exit = true;
-                } else if (v.getLabel().equals(inLabel2)) {
-                    v.addEdge(vertex1);
-                    exit = true;
+
+                    //2nd while loop to iterate over vertices list again.
+                    while (iter2.hasNext() || exit2 != true) {
+                        //Creates a temp vertex of current node.
+                        DSAGraphVertex vv = (DSAGraphVertex)iter2.next();
+                        //Checks if the label of the current node equals the source.
+                        if (vv.getLabel().equals(src)) {
+                            //Adds the new edge 
+                            vv.addEdge(newEdge);
+                            exit2 = true;
+                            //If the iterator reaches the end of the list, the source has not been found.
+                        } else if (!iter2.hasNext() && exit == false) {
+                            throw new NoSuchElementException("Source does not exist");
+                        }
+                    }
+                    //If the iterator reaches the end of the list, the dest has not been found.
+                } else if (!iter.hasNext() && exit == false) {
+                    throw new NoSuchElementException("Destination vertex does not exist");
                 }
             }
         }
@@ -131,9 +146,10 @@ public class DSAGraph {
         Iterator iter = vertices.iterator();
         
         //While loop, to iterate through the linked list until inLabel is found, or list is empty.
-        while (!iter.next().equals(inLabel) || exit == false) {
-            if (iter.next().equals(inLabel)) {
-                outVertex = (DSAGraphVertex)iter.next();
+        while (iter.hasNext() || exit != true) {
+            DSAGraphVertex v = (DSAGraphVertex)iter.next();
+            if (v.getLabel().equals(inLabel)) {
+                outVertex = v;
                 exit = true;
             }
         }
@@ -153,7 +169,7 @@ public class DSAGraph {
             if (v.getLabel().equals(inLabel)) {
                 ll = v.getAdjacent();
                 exit = true;
-            } else {
+            } else if (!iter.hasNext() && exit == false) {
                 throw new NoSuchElementException("No vertex found");
             }
         }
@@ -161,45 +177,36 @@ public class DSAGraph {
     }   
 
     //isAdjacent
-    public boolean isAdjacent(String inLabel1, String inLabel2) {
+    public boolean isAdjacent(String src, String dest) {
         //Initialise variables
-        boolean isAdjacent = false, exit = false, exit2 = false;
+        boolean exit = false, exit2 = false, adjacent = false;
+
+        //Two iterators for two loops
         Iterator iter = vertices.iterator();
-        DSALinkedList v = new DSALinkedList();
 
-        //Loop until end of linked list is reached or exit is true
+        //First loop to find source vertex
         while (iter.hasNext() || exit != true) {
-            //Create a temp vertex containing the vertex at that point in the iterator
-            DSAGraphVertex vertex = (DSAGraphVertex)iter.next();
+            DSAGraphVertex v = (DSAGraphVertex)iter.next();
+            //Check if the source is the current node.
+            if (v.getLabel().equals(src)) {
+                //Extract the adjacency list.
+                DSALinkedList ll = v.getAdjacent();
+                //2nd iterator for the adjacency list
+                Iterator iter2 = ll.iterator();
 
-            //Checks if the label of the vertex is equal to inLabel1
-            if (vertex.getLabel().equals(inLabel1)) {
-                //If true, extracts the vertex list
-                v = vertex.getAdjacent();
-                //Creates a new iterator for the linked list containing adjacent vertices
-                Iterator iter2 = v.iterator();
-
-                //Loop until end of linked list is reached or exit2 is true
+                //2nd loop to find dest vertex.
                 while (iter2.hasNext() || exit2 != true) {
-                    //Creates a temp vertex containing the vertex at the current point of the iterator
-                    DSAGraphVertex vertex2 = (DSAGraphVertex)iter2.next();
-
-                    //Checks if the label of the vertex is the same as inLabel2
-                    if (vertex2.getLabel().equals(inLabel2)) {
-                        //If true, we have found the edge.
-                        isAdjacent = true;
-                        //Exit 2nd loop
-                        exit2 = true;
-                    }
-                    isAdjacent = false;
+                    
                 }
-                //Exit first loop
-                exit = true;
+                
+
+            } else if (!iter.hasNext() && exit == false) {
+                throw new NoSuchElementException("Source does not exist");
             }
         }
-        return isAdjacent;
-    }
 
+        return adjacent;
+    }
     //displayAsList
     public void displayAsList() {
         Iterator iter = vertices.iterator();

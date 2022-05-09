@@ -8,6 +8,7 @@ public class TestDSAGraph {
    public static void testFunc() {
        DSAGraph graph = new DSAGraph();
        int count = 0;
+
        //addVertex(valid values)
        System.out.print("Testing addVertex(valid label, valid value) : ");
        try { 
@@ -22,7 +23,7 @@ public class TestDSAGraph {
        }
 
         //addEdge(valid values)
-        System.out.print("\nTesting addEdge(valid label1, valid label2) : ");
+        System.out.print("\nTesting addEdge(valid src, valid dest) : ");
         try {
             graph.addEdge("A", "B");
             graph.addEdge("B", "C");
@@ -77,7 +78,7 @@ public class TestDSAGraph {
             System.out.println("passed");
             count++;
         } catch (Exception e) {
-            System.out.println("failed");
+            System.out.println("failed: " + e.getMessage());
         }
 
        //getVertex(invalid label)
@@ -146,9 +147,9 @@ public class TestDSAGraph {
        System.out.println();
        //graph.displayAsMatrix();
     
-       System.out.println(count + "/15");
+       System.out.println(count + "/11");
 
-       double percentage = ((double)count / 15.0) * 100.0;
+       double percentage = ((double)count / 11.0) * 100.0;
        System.out.println(percentage + "%");
    }
 }
