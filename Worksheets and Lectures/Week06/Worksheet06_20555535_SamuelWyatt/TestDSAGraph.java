@@ -136,7 +136,7 @@ public class TestDSAGraph {
                System.out.println("failed");
            }
        } catch (Exception e) {
-           System.out.println("failed");
+           System.out.println("failed: " + e.getMessage());
        }
 
        //displayAsList()

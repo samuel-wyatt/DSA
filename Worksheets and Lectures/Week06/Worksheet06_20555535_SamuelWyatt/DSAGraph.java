@@ -187,6 +187,7 @@ public class DSAGraph {
         //First loop to find source vertex
         while (iter.hasNext() || exit != true) {
             DSAGraphVertex v = (DSAGraphVertex)iter.next();
+
             //Check if the source is the current node.
             if (v.getLabel().equals(src)) {
                 //Extract the adjacency list.
@@ -194,19 +195,26 @@ public class DSAGraph {
                 //2nd iterator for the adjacency list
                 Iterator iter2 = ll.iterator();
 
+                exit = true;
+
                 //2nd loop to find dest vertex.
                 while (iter2.hasNext() || exit2 != true) {
-                    
-                }
-                
+                    DSAGraphVertex vv = (DSAGraphVertex)iter2.next();
 
+                    if (vv.getLabel().equals(dest)) {
+                        adjacent = true;
+                        exit2 = true;
+                    } else if (!iter2.hasNext() && exit2 == false) {
+                        return false;
+                    }
+                }
             } else if (!iter.hasNext() && exit == false) {
-                throw new NoSuchElementException("Source does not exist");
+                return false;
             }
         }
-
         return adjacent;
     }
+
     //displayAsList
     public void displayAsList() {
         Iterator iter = vertices.iterator();
@@ -216,5 +224,8 @@ public class DSAGraph {
     }
 
     //displayAsMatrix
-    //public void displayAsMatrix() {}
+    public void displayAsMatrix() {
+        Object[][] matrix = new Object[vertices.size() + 1][vertices.size() + 1];
+        
+    }
 }
