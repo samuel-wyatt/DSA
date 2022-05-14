@@ -31,10 +31,30 @@ public class DSAGraphIO {
             System.out.println("Error: " + e.getMessage());
         }
 
-        createGraph(content);
+        DSAGraph graph = createGraph(content);
+        graph.displayAsList();
+
     }
 
-    public static void createGraph(String[] content) {
-        
+    public static DSAGraph createGraph(String[] content) {
+        DSAGraph g = new DSAGraph();
+        for (int i = 0; i < content.length; i++) {
+            
+            String temp[] = new String[2];
+            temp = content[i].split(" ");
+            
+            String src = temp[0];
+            String dest = temp[1];
+            
+            if (!g.hasVertex(src)) {
+                g.addVertex(src, null);
+            }
+            if (!g.hasVertex(dest)) {
+                g.addVertex(dest, null);
+            }
+
+            g.addEdge(src, dest);
+        }
+        return g;
     }
 }

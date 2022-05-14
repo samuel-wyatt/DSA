@@ -35,32 +35,32 @@ public class TestDSAGraph {
             System.out.println("failed");
         }
 
-       //addEdge(invalid label1 and 2)
-       System.out.print("\nTesting addEdge(invalid labels) : ");
-       try {
+        //addEdge(invalid label1 and 2)
+        System.out.print("\nTesting addEdge(invalid labels) : ");
+        try {
            graph.addEdge("AA", "BB");
            System.out.println("failed");
-       } catch (Exception e) {
+        } catch (Exception e) {
            System.out.println("passed");
            count++;
-       }
+        }
 
-       //getVertexCount()
-       System.out.print("\nTesting getVertexCount() : ");
-       try {
+        //getVertexCount()
+        System.out.print("\nTesting getVertexCount() : ");
+        try {
            if (graph.getVertexCount() == 4) {
                System.out.println("passed");
                count++;
            } else {
                System.out.println("failed");
            }
-       } catch (Exception e) {
+        } catch (Exception e) {
            System.out.println("failed");
-       }
+        }
 
-       //getEdgeCount
-       System.out.print("\nTesting getEdgeCount() : ");
-       try {
+        //getEdgeCount
+        System.out.print("\nTesting getEdgeCount() : ");
+        try {
         if (graph.getVertexCount() == 4) {
             System.out.println("passed");
             count++;
