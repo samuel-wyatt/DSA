@@ -1,4 +1,4 @@
-import java.util.Iterator;
+import java.util.*;
 
 public class TestDSAGraph {
    public static void main(String args[]) {
@@ -146,7 +146,16 @@ public class TestDSAGraph {
        //displayAsMatrix()
        System.out.println();
        //graph.displayAsMatrix();
-    
+
+       DSAQueue Q = new DSAQueue();
+       Q = graph.depthFirstSearch("A");
+       Q.display();
+
+
+       DSAQueue q = new DSAQueue();
+       q = graph.breadthFirstSearch("A");
+       q.display();
+       
        System.out.println(count + "/11");
 
        double percentage = ((double)count / 11.0) * 100.0;

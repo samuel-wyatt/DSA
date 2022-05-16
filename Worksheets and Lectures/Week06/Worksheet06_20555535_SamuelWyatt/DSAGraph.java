@@ -1,5 +1,4 @@
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class DSAGraph {
     private class DSAGraphVertex {
@@ -7,12 +6,14 @@ public class DSAGraph {
         private String label;
         private Object value;
         private DSALinkedList vertexList;
+        private boolean visited;
 
         //Constructor
         private DSAGraphVertex(String inLabel, Object inValue) {
             this.label = inLabel;
             this.value = inValue;
             vertexList = new DSALinkedList();
+            visited = false;
         }
         //Accessors
         private String getLabel() {
@@ -32,13 +33,13 @@ public class DSAGraph {
 
         //Searching 
         private void setVisited() {
-
+            this.visited = true;
         }
         private void clearVisited() {
-
+            this.visited = false;
         }
-        private void getVisited() {
-
+        private boolean getVisited() {
+            return this.visited;
         }
         public String toString() {
             StringBuilder sb = new StringBuilder();
@@ -224,8 +225,70 @@ public class DSAGraph {
     }
 
     //displayAsMatrix
-    public void displayAsMatrix() {
-        Object[][] matrix = new Object[vertices.size() + 1][vertices.size() + 1];
-        
+    //public void displayAsMatrix() {}
+
+    public DSAQueue depthFirstSearch(String startingVertex) {
+        DSAQueue T = new DSAQueue();
+        DSAStack S = new DSAStack();
+        Iterator verticesList = vertices.iterator();
+        while (verticesList.hasNext()) {
+            ((DSAGraphVertex)verticesList.next()).clearVisited();
+        }
+        DSAGraphVertex v = getVertex(startingVertex);
+        if (v == null) {
+            Iterator iter = vertices.iterator();
+            v = (DSAGraphVertex)iter.next();
+        }
+        v.setVisited();
+        S.push(v);
+        while (!S.isEmpty()) {
+            DSALinkedList adjacencyList = v.getAdjacent();
+            Iterator adjacent = adjacencyList.iterator();
+            while (adjacent.hasNext()) {
+                DSAGraphVertex w = (DSAGraphVertex)adjacent.next();
+                T.enqueue(v);
+                T.enqueue(w);
+                w.setVisited();
+                S.push(w);
+                v = w;
+            }
+            v = (DSAGraphVertex)S.pop();
+        }
+        return T;
+    }
+
+    public DSAQueue breadthFirstSearch(String startingVertex) {
+        DSAQueue T = new DSAQueue();
+        DSAQueue Q = new DSAQueue();
+        Iterator verticesList = vertices.iterator();
+        while (verticesList.hasNext()) {
+            ((DSAGraphVertex)verticesList.next()).clearVisited();
+        }
+        DSAGraphVertex v = getVertex(startingVertex);
+        if (v == null) {
+            Iterator iter = vertices.iterator();
+            v = (DSAGraphVertex)iter.next();
+        }
+        v.setVisited();
+        Q.enqueue(startingVertex);
+        while (!Q.isEmpty()) {
+            v = (DSAGraphVertex)Q.dequeue();
+            DSALinkedList adjacencyList = v.getAdjacent();
+            Iterator adjacent = adjacencyList.iterator();
+            while (adjacent.hasNext()) {
+                DSAGraphVertex w = (DSAGraphVertex)adjacent.next();
+                if (w.getVisited() != true) {
+                    T.enqueue(v);
+                    T.enqueue(w);
+                    w.setVisited();
+                    Q.enqueue(w);
+                }
+            }
+        }
+        return T;
+    }
+
+    public void sort() {
+
     }
 }
