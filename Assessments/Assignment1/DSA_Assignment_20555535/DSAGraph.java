@@ -5,14 +5,12 @@ public class DSAGraph {
         //Class variables
         private String label;
         private Object value;
-        private DSALinkedList edgeList;
         private boolean visited;
 
         //Constructor
         private DSAGraphVertex(String inLabel, Object inValue) {
             this.label = inLabel;
             this.value = inValue;
-            edgeList = new DSALinkedList();
             visited = false;
         }
         //Accessors
@@ -21,14 +19,6 @@ public class DSAGraph {
         }
         private Object getValue() {
             return this.value;
-        }
-        private DSALinkedList getAdjacent() {
-            return this.edgeList;
-        }
-
-        //Mutator
-        private void addEdge(DSAGraphEdge inEdge) {
-            edgeList.insertLast(inEdge);
         }
 
         //Searching 
@@ -41,64 +31,61 @@ public class DSAGraph {
         private boolean getVisited() {
             return this.visited;
         }
+        //toString method
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-            Iterator iter = edgeList.iterator();
-
-            sb.append(label + " : ");
-            while(iter.hasNext()) {
-                sb.append("[" + ((DSAGraphVertex)iter.next()).getLabel() + "] ");
-            }
-            return sb.toString();
+            String vertex = label + ": Value = " + value;
+            return vertex;
         }
     }
 
     private class DSAGraphEdge {
         //Class Variables
-        private String source;
-        private String destination;
-        private DSALinkedList barrier;
+        private DSAGraphVertex src;
+        private DSAGraphVertex dest;
         private double distance;
+        private DSAQueue barrier;
+        private DSAQueue security;
 
         //Constructor
-        private DSAGraphEdge(String inSource, String inDestination, String[] inBarrier, double inDistance) {
-            this.source = inSource;
-            this.destination = inDestination;
+        private DSAGraphEdge(DSAGraphVertex inSrc, DSAGraphVertex inDest, DSAQueue inBarrier, DSAQueue inSecurity, double inDistance) {
+            this.src = inSrc;
+            this.dest = inDest;
             this.distance = inDistance;
 
-            this.barrier = new DSALinkedList();
-            for (int i = 0; i < inBarrier.length; i++) {
-                this.barrier.insertLast(inBarrier[i]);    
-            }
+            this.barrier = inBarrier;
+            this.security = inSecurity;
         }
         //Accessors
-        private String getSource() {
-            return this.source;
+        private DSAGraphVertex getSource() {
+            return this.src;
         }
-        private String getDest() {
-            return this.destination;
-        }
-        private String getBarrier() {
-            return this.barrier;
+        private DSAGraphVertex getDest() {
+            return this.dest;
         }
         private double getDistance() {
             return this.distance;
         }
-        //Mutators
-        private void setBarrier(String inBarrier) {
-            this.barrier = inBarrier;
+        private DSAQueue getBarrier() {
+            return this.barrier;
         }
-        private void setDistance(double inDistance) {
-            this.distance = inDistance;
+        private DSAQueue getSecurity() {
+            return this.security;
+        }
+        //toString method
+        public String toString() {
+            String edge = src.getLabel() + ">" + dest.getLabel() + "|D:" + distance + "|S:" + security.toString() + "B:" + barrier.toString();
+            return edge;
         }
     }
 
     //Class variables
     private DSALinkedList vertices;
+    private DSALinkedList edges;
 
     //Constructor
     public DSAGraph() {
         vertices = new DSALinkedList();
+        edges = new DSALinkedList();
     }
 
     //addVertex
@@ -109,46 +96,7 @@ public class DSAGraph {
 
     //addEdge
     public void addEdge(String src, String dest, String barrier, String distance) {
-        boolean exit = false, exit2 = false;
-
-        //Initialise iterators
-        Iterator iter = vertices.iterator();
-        Iterator iter2 = vertices.iterator();
-
-        //Check if there 2 or more vertices.
-        if (vertices.size() < 2) {
-            throw new NoSuchElementException("There are less than 2 vertices");
-        } else {
-            //While loop to iterate over vertices list
-            while (iter.hasNext() || exit != true) {
-                //Creates a temp vertex of the current node
-                DSAGraphVertex v = (DSAGraphVertex)iter.next();
-                //Checks if the temp vertex is equal to the destination label
-                if (v.getLabel().equals(dest)) {
-                    //If true, create a new vertex with the label and value from the vertex.
-                    DSAGraphEdge newEdge = new DSAGraphEdge(v.getLabel(), v.getValue());
-                    exit = true;
-
-                    //2nd while loop to iterate over vertices list again.
-                    while (iter2.hasNext() || exit2 != true) {
-                        //Creates a temp vertex of current node.
-                        DSAGraphVertex vv = (DSAGraphVertex)iter2.next();
-                        //Checks if the label of the current node equals the source.
-                        if (vv.getLabel().equals(src)) {
-                            //Adds the new edge 
-                            vv.addEdge(newEdge);
-                            exit2 = true;
-                            //If the iterator reaches the end of the list, the source has not been found.
-                        } else if (!iter2.hasNext() && exit == false) {
-                            throw new NoSuchElementException("Source does not exist");
-                        }
-                    }
-                    //If the iterator reaches the end of the list, the dest has not been found.
-                } else if (!iter.hasNext() && exit == false) {
-                    throw new NoSuchElementException("Destination vertex does not exist");
-                }
-            }
-        }
+        
     }
 
     //hasVertex
@@ -171,12 +119,7 @@ public class DSAGraph {
 
     //getEdgeCount
     public int getEdgeCount() {
-        int count = 0;
-        Iterator iter = vertices.iterator();
-        while (iter.hasNext()) {
-            count += ((DSAGraphVertex)iter.next()).getAdjacent().size();
-        }
-        return count/2;
+        return edges.size();
     }
 
     //getVertex
