@@ -24,4 +24,7 @@ Silent Mode:
     -infile = The file containing the map information .
     -journey = The file containing the journey information.
     -saveFile = A file which contains the routes, ranked in order of distance.
-- Overall, running with silent mode will look like as follows: java whereNow -s infile journey saveFile
+- Overall, running with silent mode will be as follows: java whereNow -s infile journey saveFile.
+- A .txt file named routes.txt will be created, with the routes listed from shortest (distance) to longest.
+
+
