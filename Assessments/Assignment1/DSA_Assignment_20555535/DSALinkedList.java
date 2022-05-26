@@ -1,11 +1,12 @@
-/**********************************************************
- * Author: Samuel Wyatt (20555535)                        *
- * Date: 01/04/2021                                       *
- * File Name: DSALinkedList                               *
- * Purpose: To create a class to imitate a LinkedList.    *
- **********************************************************/
+/*************************************************************
+ * Author: Samuel Wyatt (20555535)                           *
+ * Date: 01/04/2021                                          *
+ * File Name: DSALinkedList                                  *
+ * Purpose: To create a class to imitate a LinkedList.       *
+ * IMPORTANT: This code has been re-used from Practical 4,   *
+ *            which was uploaded to Blackboard on 09/04/2022 *
+ *************************************************************/
 import java.io.*;
-import java.security.interfaces.DSAKeyPairGenerator;
 import java.util.*;
 public class DSALinkedList implements Iterable, Serializable {
    

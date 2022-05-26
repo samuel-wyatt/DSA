@@ -1,10 +1,11 @@
-/****************************************************
- * Author: Samuel Wyatt (20555535)                  *
- * Date: 01/04/2021                                 *
- * File Name: DSAStack                              *
- * Purpose: To create a class to imitate the stack. *
- ****************************************************/
-//Code used from Worksheet 04 DSAStack
+/*************************************************************
+ * Author: Samuel Wyatt (20555535)                           *   
+ * Date: 01/04/2021                                          *
+ * File Name: DSAStack                                       *
+ * Purpose: To create a class to imitate the stack.          *
+ * IMPORTANT: This code has been re-used from Practical 4,   *
+ *            which was uploaded to Blackboard on 09/04/2022 * 
+ *************************************************************/
 import java.util.*;
 public class DSAStack implements Iterable {
 

@@ -1,12 +1,14 @@
-/****************************************************
- * Author: Samuel Wyatt (20555535)                  *
- * Date: 01/04/2021                                 *
- * File Name: DSAStack                              *
- * Purpose: To create a class to imitate the stack. *
- ****************************************************/
-//Code used from Worksheet 03 DSAQueue.
+/*************************************************************
+ * Author: Samuel Wyatt (20555535)                           *
+ * Date: 01/04/2021                                          *
+ * File Name: DSAStack                                       *
+ * Purpose: To create a class to imitate the stack.          *
+ * IMPORTANT: This code has been re-used from Practical 4,   *
+ *            which was uploaded to Blackboard on 09/04/2022 *
+ *************************************************************/
+import java.io.Serializable;
 import java.util.*;
-public class DSAQueue implements Iterable {
+public class DSAQueue implements Iterable, Serializable {
 
     private DSALinkedList queue = new DSALinkedList();
 
@@ -42,5 +44,15 @@ public class DSAQueue implements Iterable {
 
     public Iterator iterator() {
         return queue.iterator();
+    }
+
+    public String toString() {
+        String toString = "";
+        Iterator iter = queue.iterator();
+
+        while (iter.hasNext()) {
+            toString += iter.next() + " ";
+        }
+        return toString.trim();
     }
 }

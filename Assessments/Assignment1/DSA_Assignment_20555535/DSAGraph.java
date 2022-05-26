@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.*;
 
-public class DSAGraph {
-    private class DSAGraphVertex {
+public class DSAGraph implements Serializable {
+    public class DSAGraphVertex implements Serializable {
         //Class variables
         private String label;
         private Object value;
@@ -14,11 +15,19 @@ public class DSAGraph {
             visited = false;
         }
         //Accessors
-        private String getLabel() {
+        public String getLabel() {
             return this.label;
         }
-        private Object getValue() {
+        public Object getValue() {
             return this.value;
+        }
+
+        //Mutators
+        public void setLabel(String inLabel) {
+            this.label = inLabel;
+        }
+        public void setValue(Object inValue) {
+            this.value = inValue;
         }
 
         //Searching 
@@ -33,47 +42,71 @@ public class DSAGraph {
         }
         //toString method
         public String toString() {
-            String vertex = label + ": Value = " + value;
+            String vertex = label + ": " + value;
             return vertex;
         }
     }
 
-    private class DSAGraphEdge {
+    public class DSAGraphEdge implements Serializable {
         //Class Variables
         private DSAGraphVertex src;
         private DSAGraphVertex dest;
-        private double distance;
+        private double weight;
         private DSAQueue barrier;
         private DSAQueue security;
+        private String weightUnit;
 
         //Constructor
-        private DSAGraphEdge(DSAGraphVertex inSrc, DSAGraphVertex inDest, DSAQueue inBarrier, DSAQueue inSecurity, double inDistance) {
+        public DSAGraphEdge(DSAGraphVertex inSrc, DSAGraphVertex inDest, DSAQueue inBarrier, DSAQueue inSecurity, double inWeight) {
             this.src = inSrc;
             this.dest = inDest;
-            this.distance = inDistance;
-
+            this.weight = inWeight;
             this.barrier = inBarrier;
             this.security = inSecurity;
         }
         //Accessors
-        private DSAGraphVertex getSource() {
+        public DSAGraphVertex getSource()  {
             return this.src;
         }
-        private DSAGraphVertex getDest() {
+        public DSAGraphVertex getDest() {
             return this.dest;
         }
-        private double getDistance() {
-            return this.distance;
+        public double getWeight() {
+            return this.weight;
         }
-        private DSAQueue getBarrier() {
+        public DSAQueue getBarrier() {
             return this.barrier;
         }
-        private DSAQueue getSecurity() {
+        public DSAQueue getSecurity() {
             return this.security;
         }
+        public String getWeightUnit() {
+            return this.weightUnit;
+        }
+
+        //Mutators
+        public void setSource(DSAGraphVertex inSrc)  {
+            this.src = inSrc;
+        }
+        public void setDest(DSAGraphVertex inDest) {
+            this.dest = inDest;
+        }
+        public void setWeight(double inWeight) {
+            this.weight = inWeight;
+        }
+        public void setBarrier(DSAQueue inBarrier) {
+            this.barrier = inBarrier;
+        }
+        public void setSecurity(DSAQueue inSecurity) {
+            this.security = inSecurity;
+        }
+        public void setWeightParam(String inWeightParam) {
+            this.weightUnit = inWeightParam;
+        }
+
         //toString method
         public String toString() {
-            String edge = src.getLabel() + ">" + dest.getLabel() + "|D:" + distance + "|S:" + security.toString() + "B:" + barrier.toString();
+            String edge = src.getLabel() + ">" + dest.getLabel() + "|D:" + weight + "|S:" + security.toString() + "|B:" + barrier.toString();
             return edge;
         }
     }
@@ -95,8 +128,22 @@ public class DSAGraph {
     }
 
     //addEdge
-    public void addEdge(String src, String dest, String barrier, String distance) {
-        
+    public void addEdge(String src, String dest, DSAQueue barrier, double weight, DSAQueue security) {
+        DSAGraphVertex source = null;
+        DSAGraphVertex destination = null;
+
+        source = getVertex(src);
+        destination = getVertex(dest);
+
+        //Check if both vertices were found, if not throw exception
+        if (source == null) {
+            throw new NoSuchElementException("Source vertex not found");
+        } else if (destination == null) {
+            throw new NoSuchElementException("Destination vertex not found");
+        } else {
+            DSAGraphEdge edge = new DSAGraphEdge(source, destination, barrier, security, weight);
+            edges.insertLast(edge);
+        }
     }
 
     //hasVertex
@@ -105,11 +152,36 @@ public class DSAGraph {
         Iterator iter = vertices.iterator();
 
         while (iter.hasNext()) {
-            if (iter.next().equals(inLabel)) {
+            DSAGraphVertex v = (DSAGraphVertex)iter.next();
+            if (v.getLabel().equals(inLabel)) {
                 hasVertex = true;
             }
         }
         return hasVertex;
+    }
+
+    //hasEdge
+    public boolean hasEdge(String src, String dest) {
+        boolean hasEdge = false, exit = false;
+        DSAGraphVertex source = null, destination = null;
+        Iterator iter = edges.iterator();
+
+        try {
+            source = getVertex(src);
+            destination = getVertex(dest);
+        } catch (NullPointerException e) {}
+        //Check if both vertices were found, if not throw exception
+
+        if (source != null && destination != null) {
+            while (iter.hasNext() || exit != true) {
+                DSAGraphEdge e = (DSAGraphEdge)iter.next();
+                if (e.getSource() == source && e.getDest() == destination) {
+                    hasEdge = true;
+                    exit = true;
+                }
+            }
+        }
+        return hasEdge;
     }
 
     //getVertexCount
@@ -140,134 +212,77 @@ public class DSAGraph {
         return outVertex;
     }
 
-    //getAdjacent
-    public DSALinkedList getAdjacent(String inLabel) {
-        //Initalise variables
-        DSALinkedList ll = new DSALinkedList();
-        Iterator iter = vertices.iterator();
+    //getEdge
+    public DSAGraphEdge getEdge(String src, String dest) {
+        DSAGraphEdge edge = null;
+        Iterator iter = edges.iterator();
         boolean exit = false;
 
-        //
         while (iter.hasNext() || exit != true) {
-            DSAGraphVertex v = (DSAGraphVertex)iter.next();
-            if (v.getLabel().equals(inLabel)) {
-                ll = v.getAdjacent();
+            DSAGraphEdge e = (DSAGraphEdge)iter.next();
+            if (e.getSource().getLabel().equals(src) && e.getDest().getLabel().equals(dest)) {
+                edge = e;
                 exit = true;
-            } else if (!iter.hasNext() && exit == false) {
-                throw new NoSuchElementException("No vertex found");
             }
         }
-        return ll;
-    }   
+        if (edge == null) {
+            throw new NoSuchElementException("Edge was not found");
+        }
+        return edge;
+     }
 
-    //isAdjacent
-    public boolean isAdjacent(String src, String dest) {
-        //Initialise variables
-        boolean exit = false, exit2 = false, adjacent = false;
+    //getAdjacent
+    public DSALinkedList getAdjacent(String src) {
+        DSALinkedList adjacent = null;
+        Iterator iter = edges.iterator();
 
-        //Two iterators for two loops
-        Iterator iter = vertices.iterator();
-
-        //First loop to find source vertex
-        while (iter.hasNext() || exit != true) {
-            DSAGraphVertex v = (DSAGraphVertex)iter.next();
-
-            //Check if the source is the current node.
+        while (iter.hasNext()) {
+            DSAGraphVertex v = ((DSAGraphEdge)iter.next()).getSource();
             if (v.getLabel().equals(src)) {
-                //Extract the adjacency list.
-                DSALinkedList ll = v.getAdjacent();
-                //2nd iterator for the adjacency list
-                Iterator iter2 = ll.iterator();
-
-                exit = true;
-
-                //2nd loop to find dest vertex.
-                while (iter2.hasNext() || exit2 != true) {
-                    DSAGraphVertex vv = (DSAGraphVertex)iter2.next();
-
-                    if (vv.getLabel().equals(dest)) {
-                        adjacent = true;
-                        exit2 = true;
-                    } else if (!iter2.hasNext() && exit2 == false) {
-                        return false;
-                    }
-                }
-            } else if (!iter.hasNext() && exit == false) {
-                return false;
+                adjacent.insertLast(v);
             }
         }
         return adjacent;
+    }   
+
+    //getEdgeList
+    public DSALinkedList getEdgeList() {
+        return edges;
     }
 
     //displayAsList
     public void displayAsList() {
         Iterator iter = vertices.iterator();
+        //Iterate through the entire vertices list
         while (iter.hasNext()) {
-            System.out.println(iter.next().toString());
+            DSAGraphVertex v = (DSAGraphVertex)iter.next();
+            //Print the vertex using its toString method
+            System.out.print(v.toString());
+            //Create a second iterator for the edge list
+            Iterator iter2 = edges.iterator();
+            //Iterate through the entire edge list
+            while (iter2.hasNext()) {
+                DSAGraphEdge e = (DSAGraphEdge)iter2.next();
+                //Check if the label of the source of edge e is equal to the label of the current vertex
+                if (e.getSource().getLabel().equals(v.getLabel())) {
+                    System.out.print(" -> " + e.getDest().getLabel());
+                }
+            }
+            System.out.println();
         }
     }
 
     //displayAsMatrix
-    //public void displayAsMatrix() {}
+    public void displayAsMatrix() {
+        Iterator iter = vertices.iterator();
+    } 
 
-    public DSAQueue depthFirstSearch(String startingVertex) {
-        DSAQueue T = new DSAQueue();
-        DSAStack S = new DSAStack();
-        Iterator verticesList = vertices.iterator();
-        while (verticesList.hasNext()) {
-            ((DSAGraphVertex)verticesList.next()).clearVisited();
-        }
-        DSAGraphVertex v = getVertex(startingVertex);
-        if (v == null) {
-            Iterator iter = vertices.iterator();
-            v = (DSAGraphVertex)iter.next();
-        }
-        v.setVisited();
-        S.push(v);
-        while (!S.isEmpty()) {
-            DSALinkedList adjacencyList = v.getAdjacent();
-            Iterator adjacent = adjacencyList.iterator();
-            while (adjacent.hasNext()) {
-                DSAGraphVertex w = (DSAGraphVertex)adjacent.next();
-                T.enqueue(v);
-                T.enqueue(w);
-                w.setVisited();
-                S.push(w);
-                v = w;
-            }
-            v = (DSAGraphVertex)S.pop();
-        }
-        return T;
+
+  /*  public DSAQueue depthFirstSearch(String startingVertex) {
+        
     }
 
     public DSAQueue breadthFirstSearch(String startingVertex) {
-        DSAQueue T = new DSAQueue();
-        DSAQueue Q = new DSAQueue();
-        Iterator verticesList = vertices.iterator();
-        while (verticesList.hasNext()) {
-            ((DSAGraphVertex)verticesList.next()).clearVisited();
-        }
-        DSAGraphVertex v = getVertex(startingVertex);
-        if (v == null) {
-            Iterator iter = vertices.iterator();
-            v = (DSAGraphVertex)iter.next();
-        }
-        v.setVisited();
-        Q.enqueue(startingVertex);
-        while (!Q.isEmpty()) {
-            v = (DSAGraphVertex)Q.dequeue();
-            DSALinkedList adjacencyList = v.getAdjacent();
-            Iterator adjacent = adjacencyList.iterator();
-            while (adjacent.hasNext()) {
-                DSAGraphVertex w = (DSAGraphVertex)adjacent.next();
-                if (w.getVisited() != true) {
-                    T.enqueue(v);
-                    T.enqueue(w);
-                    w.setVisited();
-                    Q.enqueue(w);
-                }
-            }
-        }
-        return T;
-    }
+    
+    }*/
 }
