@@ -59,7 +59,7 @@ public class DSALinkedList implements Iterable, Serializable {
 
         public Object next() {
             Object value;
-            if (iterNext == null) {
+             if (iterNext == null) {
                 value = null;
             } else {
                 value = iterNext.getValue();
@@ -69,7 +69,8 @@ public class DSALinkedList implements Iterable, Serializable {
         }
 
         public void remove() {
-            throw new UnsupportedOperationException("Not Supported");
+            Object value = iterNext.getPrev().getValue();
+            removeNode(value);
         }
     }
 
@@ -196,6 +197,36 @@ public class DSALinkedList implements Iterable, Serializable {
         }
         return nodeValue;
     } 
+
+    Object removeNode(Object inValue) {
+        Object nodeValue = null;
+        DSAListNode currNd = head;
+        boolean exit = false;
+        if (isEmpty()) {
+            return null;
+        } else {
+            while (currNd != null && !exit) {
+                if (currNd.getValue().equals(inValue)) {
+                    if (currNd == head) {
+                        removeFirst();
+                    } else if (currNd == tail) {
+                        removeLast();
+                    } else {
+                        DSAListNode next = currNd.getNext();
+                        DSAListNode prev = currNd.getPrev();
+                        prev.setNext(next);
+                        next.setPrev(prev);
+                        currNd.setNext(null);
+                        currNd.setPrev(null);
+                    }
+                    exit = true;
+                } else {
+                    currNd = currNd.getNext();
+                }
+            }
+        }
+        return nodeValue;
+    }
 
     boolean find(Object inValue) {
         DSAListNode currNd = head;

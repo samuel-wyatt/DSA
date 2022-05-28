@@ -30,6 +30,10 @@ public class DSAQueue implements Iterable, Serializable {
         return (queue.size() == 0);
     }
 
+    public int size() {
+        return queue.size();
+    }
+
     public Object peek() {
         if (isEmpty()) {
             throw new ArrayIndexOutOfBoundsException("Queue is empty.");

@@ -283,7 +283,21 @@ public class DSAGraph implements Serializable {
             }
         }
         return adjacent;
-    }   
+    }
+
+    public DSALinkedList getAdjacentEdges(String src) {
+        DSALinkedList adjacent = new DSALinkedList();
+        Iterator iter = edges.iterator();
+
+        while (iter.hasNext()) {
+            DSAGraphEdge edge = (DSAGraphEdge)iter.next();
+            DSAGraphVertex source = edge.getSource();
+            if (source.getLabel().equals(src)) {
+                adjacent.insertLast(edge);
+            }
+        }
+        return adjacent;
+    }
 
     //getEdgeList
     public DSALinkedList getEdgeList() {
@@ -314,86 +328,152 @@ public class DSAGraph implements Serializable {
 
     //displayAsMatrix
     public void displayAsMatrix() {
-        //Iterator iter = vertices.iterator();
+        Iterator iter = edges.iterator();
+        int[][] matrix = new int[vertices.size()][vertices.size()];
+        while (iter.hasNext()) {
+            DSAGraphEdge e = (DSAGraphEdge)iter.next();
+
+        }
     } 
 
+    public DSALinkedList findAllPaths(String startingVertex, String targetVertex) {
+        DSAGraphVertex start = getVertex(startingVertex);
+        DSAGraphVertex target = getVertex(targetVertex);
 
-    public DSAQueue breadthFirstSearch(String startingVertex) {
-        //Initialising variables
-        DSAQueue T = new DSAQueue();
-        DSAQueue Q = new DSAQueue();
-        
-        //Iterator to clear visited on all vertices
-        Iterator clear = vertices.iterator();
-        while(clear.hasNext()) {
-            DSAGraphVertex temp = (DSAGraphVertex)clear.next();
-            temp.clearVisited();
+        DSALinkedList paths = new DSALinkedList();
+
+        DSAStack S = new DSAStack();
+
+        if (start == null) {
+            throw new NoSuchElementException("ERROR: Start node does not exist");
+        } else if (target == null) {
+            throw new NoSuchElementException("ERROR: Target node does not exist");
+        } else {
+            //Clear visited on all vertices
+            Iterator clear = vertices.iterator();
+            while (clear.hasNext()) {
+                ((DSAGraphVertex)clear.next()).clearVisited();
+            }
+            //Set the starting node as visited, will not change
+            DSAGraphVertex v = start;
+            v.setVisited();
+            S.push(v);
+            while (!S.isEmpty()) {
+                DSALinkedList adjacencyList = getAdjacent(v.getLabel());
+                Iterator adjIter = adjacencyList.iterator();
+                DSAGraphVertex w = (DSAGraphVertex)adjIter.next();
+                while (!w.getVisited()) {
+                    S.push(w);
+                    if (w == target) {
+                        paths.insertLast(S);
+                    }
+                    v = w;
+
+                    adjacencyList = getAdjacent(v.getLabel());
+                    adjIter = adjacencyList.iterator();
+                    w = (DSAGraphVertex)adjIter.next();
+                }
+                v = (DSAGraphVertex)S.pop();
+                v.clearVisited();
+            }
+            return paths;
         }
+    }
 
-        //Reference the starting vertex from the label provided
-        DSAGraphVertex v = getVertex(startingVertex);
-        //Check if the starting vertex provided is in the vertex list
-        if (v == null) {
-            throw new NoSuchElementException("No such startingVertex was found");
+    public void GetPaths(String startVertex, String targetVertex)
+    {
+        GetPathsRec(getVertex(startVertex), targetVertex, new DSAStack(), new DSAStack());
+    }
+
+    public void GetPathsRec(DSAGraphVertex cur, String target, DSAStack path, DSAStack edges)
+    {
+        System.out.println(cur.getLabel());
+        path.push(cur);
+        if (cur.getLabel().equals(target))
+        {
+            System.out.println("Fuck Java");
+            path.display();
+            edges.display();
         }
-        //Set the starting vertex as visited
-        v.setVisited();
-        Q.enqueue(v);
-
-        while (!Q.isEmpty()) {
-            v = (DSAGraphVertex)Q.dequeue();
-            DSALinkedList adjacent = getAdjacent(v.getLabel());
-            Iterator iter = adjacent.iterator();
-            while (iter.hasNext()) {
-                DSAGraphVertex w = (DSAGraphVertex)iter.next();
-                if (w.getVisited()) {
-                    T.enqueue(v);
-                    T.enqueue(w);
-                    w.setVisited();
-                    Q.enqueue(w);
+        else
+        {
+            DSALinkedList adj = getAdjacentEdges(cur.getLabel());
+            Iterator iter = adj.iterator();
+            while (iter.hasNext())
+            {
+                DSAGraphEdge curEdge = (DSAGraphEdge)iter.next();
+                DSAGraphVertex dest = curEdge.getDest();
+                if (vertexNotInPath(dest, path))
+                {
+                    edges.push(curEdge);
+                    GetPathsRec(dest, target, path, edges);
+                    edges.pop();
                 }
             }
+        }
+        path.pop();
+    }
+
+    public Boolean vertexNotInPath(DSAGraphVertex vertex, DSAStack path)
+    {
+        Iterator iter = path.iterator();
+        while (iter.hasNext())
+        {
+            String pathNodeName = ((DSAGraphVertex)iter.next()).getLabel();
+            if (vertex.getLabel().equals(pathNodeName))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public DSAQueue DFS(String startVertex, String targetVertex) {
+        DSAGraphVertex start = getVertex(startVertex);
+        DSAGraphVertex target = getVertex(targetVertex);
+
+        DSALinkedList paths = new DSALinkedList();
+
+        DSAStack S = new DSAStack();
+        DSAQueue T = new DSAQueue();
+
+        Iterator clear = vertices.iterator();
+        while (clear.hasNext()) {
+            ((DSAGraphVertex)clear.next()).clearVisited();
+        }
+
+        DSAGraphVertex v = start;
+        v.setVisited();
+        S.push(v);
+
+        while (!S.isEmpty()) {
+            DSALinkedList adjacency = getAdjacent(v.getLabel());
+            while (checkUnvisited(adjacency) != null) {
+                DSAGraphVertex w = checkUnvisited(adjacency);
+               // T.enqueue(v);
+                T.enqueue(w);
+                w.setVisited();
+                S.push(w);
+                v = w;
+                if ((DSAGraphVertex)S.top() == target) {
+
+                }
+            }
+            v = (DSAGraphVertex)S.pop();
         }
 
         return T;
     }
 
-    public DSAQueue depthFirstSearch(String startingVertex) {
-        //Initialise variables
-        DSAQueue T = new DSAQueue();
-        DSAStack S = new DSAStack();
-
-        ///Iterator to clear visited on all vertices
-        Iterator clear = vertices.iterator();
-        while(clear.hasNext()) {
-            DSAGraphVertex temp = (DSAGraphVertex)clear.next();
-            temp.clearVisited();
+    public DSAGraphVertex checkUnvisited(DSALinkedList adjacency) {
+        DSAGraphVertex vertex = null;
+        Iterator iter = adjacency.iterator();
+        while (iter.hasNext()) {
+            vertex = (DSAGraphVertex)iter.next();
+            if (!vertex.getVisited()) {
+                return vertex;
+            }
         }
-
-        //Reference the starting vertex from the label provided
-        DSAGraphVertex v = getVertex(startingVertex);
-        //Check if the starting vertex provided is in the vertex list
-        if (v == null) {
-            throw new NoSuchElementException("No such startingVertex was found");
-        }
-        //Set the starting vertex as visited
-        v.setVisited();
-        S.push(v);
-
-        while(!S.isEmpty()) {
-            DSALinkedList adjacent = getAdjacent(v.getLabel());
-            Iterator iter = adjacent.iterator();
-            DSAGraphVertex w = (DSAGraphVertex)iter.next();
-            do {
-                T.enqueue(v);
-                T.enqueue(w);
-                w.setVisited();
-                S.push(w);
-                v = w;
-            } while (iter.hasNext() && !w.getVisited());
-            v = (DSAGraphVertex)S.pop();
-        }
-
-        return T;
+        return null;
     }
 }

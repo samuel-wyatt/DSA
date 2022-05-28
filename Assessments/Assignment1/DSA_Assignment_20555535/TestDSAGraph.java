@@ -29,7 +29,7 @@ public class TestDSAGraph {
 
         getVertexTest(graph);
         getEdgeTest(graph);
-        getAdjacentTest(graph);
+        getAdjacentTest();
     }
 
     public static void addVertexTest(DSAGraph graph) {
@@ -172,9 +172,13 @@ public class TestDSAGraph {
     public static void getEdgeTest(DSAGraph graph) {
         System.out.print("Testing getEdge : ");
         try {
+            //Creating the edge
             DSAQueue barrier = new DSAQueue();
             DSAQueue security = new DSAQueue();
+            graph.addVertex("10", null);
             graph.addEdge("10", "50", barrier, 5.7, security);
+
+            //Calling getEdge
             DSAGraph.DSAGraphEdge e = graph.getEdge("10", "50");
             if (e.getWeight() == 5.7) {
                 System.out.println("passed");
@@ -186,12 +190,30 @@ public class TestDSAGraph {
         }
     }
 
-    public static void getAdjacentTest(DSAGraph graph) {
+    public static void getAdjacentTest() {
         System.out.print("Testing getAdjacent : ");
         try {
+            DSAGraph graph = new DSAGraph();
+            graph.addVertex("A", null);
+            graph.addVertex("B", null);
+            graph.addVertex("C", null);
+            graph.addVertex("D", null);
+            graph.addVertex("E", null);
+
+            graph.addEdge("A", "D", null, 1, null);
+            graph.addEdge("A", "B", null, 1, null);
+            graph.addEdge("A", "E", null, 1, null);
+            graph.addEdge("C", "E", null, 1, null);
+            graph.addEdge("C", "D", null, 1, null);
+            graph.addEdge("C", "B", null, 1, null);
+
             DSALinkedList list = new DSALinkedList();
-            list = graph.getAdjacent("10");
-            System.out.println(list.toString());
+            list = graph.getAdjacent("A");
+            if (list.toString().equals("[D][B][E]")) {
+                System.out.println("passed");
+            } else {
+                System.out.println("failed");
+            }
         } catch (Exception e) {
             System.out.println("failed");
         }

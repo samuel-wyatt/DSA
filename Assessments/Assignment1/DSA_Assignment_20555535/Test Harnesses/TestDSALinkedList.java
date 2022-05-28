@@ -1,3 +1,5 @@
+import java.util.Iterator;
+
 public class TestDSALinkedList {
     public static void main(String args[]) {
         DSALinkedList l = new DSALinkedList();
@@ -136,5 +138,12 @@ public class TestDSALinkedList {
         System.out.println("_____________________________________________________");
         System.out.println("100 =  "  + ll.find(100));
         System.out.println("15 = " + ll.find(15));
+
+        //Testing remove()
+        ll.insertFirst("20");
+        ll.insertFirst("50");
+        System.out.println(ll.toString());
+        ll.removeNode("20");
+        System.out.println(ll.toString());
     }
 }
