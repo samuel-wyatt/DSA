@@ -1,3 +1,10 @@
+/**********************************************************
+ * Author: Samuel Wyatt (20555535)                        *
+ * Date: 25/04/2022                                       *
+ * File Name: DSAGraph                                    *
+ * Purpose: To create a class to imitate a graph.         *
+ * IMPORTANT: This code has been re-used from Practical 5 *
+ **********************************************************/
 import java.io.Serializable;
 import java.util.*;
 
@@ -42,8 +49,7 @@ public class DSAGraph implements Serializable {
         }
         //toString method
         public String toString() {
-            String vertex = label + ": " + value;
-            return vertex;
+            return label;
         }
     }
 
@@ -146,6 +152,43 @@ public class DSAGraph implements Serializable {
         }
     }
 
+    //deleteVertex
+    public void deleteVertex(String inLabel) {
+        Iterator iter = vertices.iterator();
+        boolean exit = false;
+        while (iter.hasNext() && !exit) {
+            DSAGraphVertex v = (DSAGraphVertex)iter.next();
+            if (v.getLabel().equals(inLabel)) {
+                iter.remove();
+                exit = true;
+            }
+        }
+    }
+
+    //deleteEdge
+    public void deleteEdge(String inLabel) {
+        Iterator iter = edges.iterator();
+        while (iter.hasNext()) {
+            DSAGraphEdge e = (DSAGraphEdge)iter.next();
+            //If the source or destination's label equals the inLabel, delete the edge
+            if (e.getSource().getLabel().equals(inLabel) || e.getDest().getLabel().equals(inLabel)) {
+                iter.remove();
+            }
+        }
+    }
+
+    //deleteEdge
+    public void deleteEdge(String src, String dest) {
+        Iterator iter = edges.iterator();
+        while (iter.hasNext()) {
+            DSAGraphEdge e = (DSAGraphEdge)iter.next();
+            //If the source or destination's label equals the inLabel, delete the edge
+            if (e.getSource().getLabel().equals(src) && e.getDest().getLabel().equals(dest)) {
+                iter.remove();
+            }
+        }
+    }
+
     //hasVertex
     public boolean hasVertex(String inLabel) {
         boolean hasVertex = false;
@@ -198,15 +241,13 @@ public class DSAGraph implements Serializable {
     public DSAGraphVertex getVertex(String inLabel) {
         //Initalise variables
         DSAGraphVertex outVertex = null;
-        boolean exit = false;
         Iterator iter = vertices.iterator();
         
-        //While loop, to iterate through the linked list until inLabel is found, or list is empty.
-        while (iter.hasNext() || exit != true) {
+        //While loop, to iterate through the linked list until list is empty.
+        while (iter.hasNext()) {
             DSAGraphVertex v = (DSAGraphVertex)iter.next();
             if (v.getLabel().equals(inLabel)) {
                 outVertex = v;
-                exit = true;
             }
         }
         return outVertex;
@@ -218,28 +259,27 @@ public class DSAGraph implements Serializable {
         Iterator iter = edges.iterator();
         boolean exit = false;
 
-        while (iter.hasNext() || exit != true) {
+        while (iter.hasNext()) {
             DSAGraphEdge e = (DSAGraphEdge)iter.next();
             if (e.getSource().getLabel().equals(src) && e.getDest().getLabel().equals(dest)) {
                 edge = e;
                 exit = true;
             }
         }
-        if (edge == null) {
-            throw new NoSuchElementException("Edge was not found");
-        }
         return edge;
      }
 
     //getAdjacent
     public DSALinkedList getAdjacent(String src) {
-        DSALinkedList adjacent = null;
+        DSALinkedList adjacent = new DSALinkedList();
         Iterator iter = edges.iterator();
 
         while (iter.hasNext()) {
-            DSAGraphVertex v = ((DSAGraphEdge)iter.next()).getSource();
-            if (v.getLabel().equals(src)) {
-                adjacent.insertLast(v);
+            DSAGraphEdge edge = (DSAGraphEdge)iter.next();
+            DSAGraphVertex source = edge.getSource();
+            DSAGraphVertex dest = edge.getDest();
+            if (source.getLabel().equals(src)) {
+                adjacent.insertLast(dest);
             }
         }
         return adjacent;
@@ -274,15 +314,86 @@ public class DSAGraph implements Serializable {
 
     //displayAsMatrix
     public void displayAsMatrix() {
-        Iterator iter = vertices.iterator();
+        //Iterator iter = vertices.iterator();
     } 
 
 
-  /*  public DSAQueue depthFirstSearch(String startingVertex) {
+    public DSAQueue breadthFirstSearch(String startingVertex) {
+        //Initialising variables
+        DSAQueue T = new DSAQueue();
+        DSAQueue Q = new DSAQueue();
         
+        //Iterator to clear visited on all vertices
+        Iterator clear = vertices.iterator();
+        while(clear.hasNext()) {
+            DSAGraphVertex temp = (DSAGraphVertex)clear.next();
+            temp.clearVisited();
+        }
+
+        //Reference the starting vertex from the label provided
+        DSAGraphVertex v = getVertex(startingVertex);
+        //Check if the starting vertex provided is in the vertex list
+        if (v == null) {
+            throw new NoSuchElementException("No such startingVertex was found");
+        }
+        //Set the starting vertex as visited
+        v.setVisited();
+        Q.enqueue(v);
+
+        while (!Q.isEmpty()) {
+            v = (DSAGraphVertex)Q.dequeue();
+            DSALinkedList adjacent = getAdjacent(v.getLabel());
+            Iterator iter = adjacent.iterator();
+            while (iter.hasNext()) {
+                DSAGraphVertex w = (DSAGraphVertex)iter.next();
+                if (w.getVisited()) {
+                    T.enqueue(v);
+                    T.enqueue(w);
+                    w.setVisited();
+                    Q.enqueue(w);
+                }
+            }
+        }
+
+        return T;
     }
 
-    public DSAQueue breadthFirstSearch(String startingVertex) {
-    
-    }*/
+    public DSAQueue depthFirstSearch(String startingVertex) {
+        //Initialise variables
+        DSAQueue T = new DSAQueue();
+        DSAStack S = new DSAStack();
+
+        ///Iterator to clear visited on all vertices
+        Iterator clear = vertices.iterator();
+        while(clear.hasNext()) {
+            DSAGraphVertex temp = (DSAGraphVertex)clear.next();
+            temp.clearVisited();
+        }
+
+        //Reference the starting vertex from the label provided
+        DSAGraphVertex v = getVertex(startingVertex);
+        //Check if the starting vertex provided is in the vertex list
+        if (v == null) {
+            throw new NoSuchElementException("No such startingVertex was found");
+        }
+        //Set the starting vertex as visited
+        v.setVisited();
+        S.push(v);
+
+        while(!S.isEmpty()) {
+            DSALinkedList adjacent = getAdjacent(v.getLabel());
+            Iterator iter = adjacent.iterator();
+            DSAGraphVertex w = (DSAGraphVertex)iter.next();
+            do {
+                T.enqueue(v);
+                T.enqueue(w);
+                w.setVisited();
+                S.push(w);
+                v = w;
+            } while (iter.hasNext() && !w.getVisited());
+            v = (DSAGraphVertex)S.pop();
+        }
+
+        return T;
+    }
 }
