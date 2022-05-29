@@ -1,3 +1,10 @@
+/**********************************************************
+ * Author: Samuel Wyatt (20555535)                        *
+ * Date: 25/05/2022                                       *
+ * File Name: Journey                                     *
+ * Purpose: To create a class to hold data related to the *
+ * journey provided to the program.                       *
+ **********************************************************/
 public class Journey {
     //Class Variables
     private String from;

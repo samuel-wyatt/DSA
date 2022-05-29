@@ -1,4 +1,9 @@
-
+/**********************************************************
+ * Author: Samuel Wyatt (20555535)                        *
+ * Date: 10/05/2022                                       *
+ * File Name: whereNow                                    *
+ * Purpose: The main class for the DSA Assignment         *
+ **********************************************************/
 import java.util.*;
 import java.io.*;
 import java.lang.*;
@@ -42,7 +47,10 @@ public class whereNow {
         //Declare the graph, which will contain the entire map
         DSAGraph mapGraph = null;
         Journey mapJourney = null;
+        Object[] finalRouteList = null;
+        DSAGraph traversableGraph = null;
         int userInput = 11;
+        double multiplier = 0.0;
         //Do 
         do {
             userInput = -1;
@@ -85,31 +93,51 @@ public class whereNow {
                     }
                     break;
                 case 2:
-                    try {    
-                        nodeOperations(mapGraph);
-                    } catch (Exception e) {
-                        System.out.println("ERROR: " + e);
+                    if (mapGraph == null) {
+                        System.out.println("ERROR: Please provide a map first");
+                    } else {
+                        try {    
+                            nodeOperations(mapGraph);
+                        } catch (Exception e) {
+                            System.out.println("ERROR: " + e);
+                        }
                     }
                     break;
                 case 3:
-                    try {
+                if (mapGraph == null) {
+                    System.out.println("ERROR: Please provide a map first");
+                } else {
+                    try {    
                         edgeOperations(mapGraph);
                     } catch (Exception e) {
-                        System.out.println("ERROR: " + e.getMessage());
+                        System.out.println("ERROR: " + e);
                     }
+                }
                     break;
                 case 4:
-                    try {
-                        parameterTweak(mapGraph);
+                if (mapGraph == null) {
+                    System.out.println("ERROR: Please provide a map first");
+                } else {
+                    try {    
+                        multiplier = parameterTweak(mapGraph);
                     } catch (Exception e) {
-                        System.out.println("ERROR: " + e.getMessage());
+                        System.out.println("ERROR: " + e);
                     }
+                }
                     break;
                 case 5:
-                    mapGraph.displayAsList();
+                    if (mapGraph == null) {
+                        System.out.println("ERROR: Please provide a map first");
+                    } else {
+
+                    }
                     break;
                 case 6:
-                    displayWorld(mapGraph, mapJourney);
+                    if (mapGraph == null) {
+                        System.out.println("ERROR: Please provide a map first");
+                    } else {
+                        displayWorld(mapGraph, mapJourney, multiplier);
+                    }
                     break;
                 case 7:
                     System.out.println("(1) Load from text file\n(2) Manual input\n");
@@ -120,23 +148,59 @@ public class whereNow {
                             System.out.print("\n\nPlease enter the file name: ");
                             fileName = sc.nextLine().trim();
                             mapJourney = loadJourneyFile(fileName);
+                            if (mapJourney == null) {
+                                System.out.println("ERROR: The journey is null, please try again");
+                            } else {
+                                System.out.println("Loaded...");
+                            }
                         } else if (userInput2 == 2) {
                             mapJourney = enterJourney();
-                        }
-                        if (mapJourney == null) {
-                            System.out.println("ERROR: The journey is null, please try again");
-                        } else {
-                            System.out.println("Loaded...");
+                            if (mapJourney == null) {
+                                System.out.println("ERROR: The journey is null, please try again");
+                            } else {
+                                System.out.println("Loaded...");
+                            }
+                        } else if (userInput2 != 1 && userInput2 != 2) {
+                            System.out.println("Invalid Input!"); 
                         }
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid Input!");
                     }
                     break;
                 case 8:
-                    DSAGraph traversableGraph = createTraversableGraph(mapGraph, mapJourney);
-                    findRoutes(traversableGraph, mapJourney);
+                    if (mapGraph == null) {
+                        System.out.println("The map has not been provided, please provide a map first");
+                    } else if (mapJourney == null) {
+                        System.out.println("The journey has not been provided, please provide a journey first");
+                    } else {
+                        traversableGraph = createTraversableGraph(mapGraph, mapJourney);
+                        if (traversableGraph != null) {
+                            DSALinkedList routes = calculateRoutes(traversableGraph, mapJourney);
+                            finalRouteList = rankRoutes(routes);
+                            resetDistance(traversableGraph, finalRouteList, mapJourney.getBarrier());
+                            System.out.println("Generated...");
+                        }
+                    }
                     break;
                 case 9:
+                    if (traversableGraph == null || mapJourney == null) {
+                        System.out.println("ERROR: Must generate routes first (8)");
+                    } else {
+                        printRoutes(finalRouteList);
+                        System.out.println("(1) Save\n(2) Discard");
+                        try {
+                            userInput = Integer.parseInt(sc.nextLine().trim());
+                            if (userInput == 1) {
+                                saveRoutes(finalRouteList, "Routes.txt");
+                            } else if (userInput == 2) {
+                                System.out.println("Discarrding...");
+                            } else {
+                                System.out.println("Invalid Input!");
+                            }
+                        }catch (NumberFormatException e) {
+                            System.out.println("Invalid Input!");
+                        }
+                    }
                     break;
                 case 10:
                     if (mapGraph == null) {
@@ -169,10 +233,13 @@ public class whereNow {
         DSAGraph mapGraph = loadInputFile(inFile);
         //Load the journey from the provided file
         Journey mapJourney = loadJourneyFile(journey);
-        //Calculate the routes 
-        DSAGraph traversableGraph = createTraversableGraph(mapGraph, mapJourney);
-        findRoutes(traversableGraph, mapJourney);
-
+        if (mapGraph == null || mapJourney == null) {
+            //Calculate the routes 
+            DSAGraph traversableGraph = createTraversableGraph(mapGraph, mapJourney);
+            DSALinkedList routes = calculateRoutes(traversableGraph, mapJourney);
+            Object[] finalRoutes = rankRoutes(routes);
+            saveRoutes(finalRoutes, saveFile);
+        }
     }
 
     public static DSAGraph loadInputFile(String fileName) {
@@ -282,28 +349,32 @@ public class whereNow {
     public static void nodeOperations(DSAGraph mapGraph) {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n----Node Operations----");
-        int userInput;
+        int userInput = -1;
         do {
-            System.out.println("(1) Find a node\n(2) Insert a node\n(3) Delete a node\n(4) Update a node\n(0) Exit");
-            userInput = Integer.parseInt(sc.nextLine().trim());
-            switch (userInput) {
-                case 1:
-                    operations.nodeFind(mapGraph);
-                    break;
-                case 2:
-                    operations.nodeInsert(mapGraph);
-                    break;
-                case 3:
-                    operations.nodeDelete(mapGraph);
-                    break;
-                case 4:
-                    operations.nodeUpdate(mapGraph);
-                    break;
-                case 0:
-                    break;
-                default:
-                    System.out.println("Invalid Input!");
-                    break;
+            System.out.println("\n(1) Find a node\n(2) Insert a node\n(3) Delete a node\n(4) Update a node\n(0) Exit");
+            try {
+                userInput = Integer.parseInt(sc.nextLine().trim());
+                switch (userInput) {
+                    case 1:
+                        operations.nodeFind(mapGraph);
+                        break;
+                    case 2:
+                        operations.nodeInsert(mapGraph);
+                        break;
+                    case 3:
+                        operations.nodeDelete(mapGraph);
+                        break;
+                    case 4:
+                        operations.nodeUpdate(mapGraph);
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        System.out.println("Invalid Input!");
+                        break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid Input!");
             }
         } while (userInput != 0);
     }
@@ -311,28 +382,32 @@ public class whereNow {
     public static void edgeOperations(DSAGraph mapGraph) {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n----Edge Operations----");
-        int userInput;
+        int userInput = -1;
         do {
-            System.out.println("(1) Find an edge\n(2) Insert an edge\n(3) Delete an edge\n(4) Update an edge\n(0) Exit");
-            userInput = Integer.parseInt(sc.nextLine().trim());
-            switch (userInput) {
-                case 1:
-                    operations.edgeFind(mapGraph);
-                    break;
-                case 2:
-                    operations.edgeInsert(mapGraph);
-                    break;
-                case 3:
-                    operations.edgeDelete(mapGraph);
-                    break;
-                case 4:
-                    operations.edgeUpdate(mapGraph);
-                    break;
-                case 0:
-                    break;
-                default:
-                    System.out.println("Invalid Input!");
-                    break;
+            System.out.println("\n(1) Find an edge\n(2) Insert an edge\n(3) Delete an edge\n(4) Update an edge\n(0) Exit");
+            try {
+                userInput = Integer.parseInt(sc.nextLine().trim());
+                switch (userInput) {
+                    case 1:
+                        operations.edgeFind(mapGraph);
+                        break;
+                    case 2:
+                        operations.edgeInsert(mapGraph);
+                        break;
+                    case 3:
+                        operations.edgeDelete(mapGraph);
+                        break;
+                    case 4:
+                        operations.edgeUpdate(mapGraph);
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        System.out.println("Invalid Input!");
+                        break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid Input!");
             }
         } while (userInput != 0);
     }
@@ -438,7 +513,7 @@ public class whereNow {
         return mapJourney;
     }
 
-    public static void parameterTweak(DSAGraph mapGraph) {
+    public static double parameterTweak(DSAGraph mapGraph) {
         Scanner sc = new Scanner(System.in);
         System.out.println("Please enter the relevant information to adjust the weight mapping of the edges");
         System.out.print("\tMultiplier: ");
@@ -453,8 +528,9 @@ public class whereNow {
             double oldWeight = e.getWeight();
             double newWeight = oldWeight * multiplier;
             e.setWeight(newWeight);
-            e.setWeightParam(unit);
+            e.setWeightUnit(unit);
         }
+        return multiplier;
     }
 
     public static DSAGraph createTraversableGraph(DSAGraph oldGraph, Journey mapJourney) {
@@ -465,158 +541,303 @@ public class whereNow {
         //Extract the edge list from the graph, and create an iterator
         DSALinkedList edgeList = newGraph.getEdgeList();
         Iterator edgeIter = edgeList.iterator();
+       
+        //Check if the source and destination provided are valid
+        if (oldGraph.hasVertex(mapJourney.getFrom())) {
+            if (oldGraph.hasVertex(mapJourney.getTo())) {
 
-        if (oldGraph != null) {
-            if (mapJourney != null) {        
-                //Check if the source and destination provided are valid
-                if (newGraph.hasVertex(mapJourney.getFrom())) {
-                    if (newGraph.hasVertex(mapJourney.getTo())) {
-                        //Iterate through the edges to find the greatest weight
-                        Iterator weightIter = edgeList.iterator();
-                        double maxWeight = 0;
-                        while (weightIter.hasNext()) {
-                            DSAGraph.DSAGraphEdge currEdge = (DSAGraph.DSAGraphEdge)weightIter.next();
-                            if (currEdge.getWeight() > maxWeight) {
-                                maxWeight = currEdge.getWeight();                   
-                            }
-                        }
-                        final int WEIGHTINCREASE = (int)Math.ceil(maxWeight);
-                        
-                        //Loop through the edgeList, removing edges with higher security and increasing the weighting of edges with barriers
-                        while (edgeIter.hasNext()) {
-                            //Extract the current edge from the linked list
-                            DSAGraph.DSAGraphEdge currEdge = (DSAGraph.DSAGraphEdge)edgeIter.next();
-                
-                            //If the edge contains a barrier that should be avoided, increase the weight by WEIGHTINCREASE
-                            String[] edgeBarrier = new String[currEdge.getBarrier().size()];
-                            String[] journeyBarrier = new String[mapJourney.getBarrier().size()];
-
-                            for (int i = 0; i < edgeBarrier.length; i++) {
-                                String barrier = (String)currEdge.getBarrier().dequeue();
-                                edgeBarrier[i] = barrier;
-                                currEdge.getBarrier().enqueue(barrier);
-                            }
-                            for (int i = 0; i < journeyBarrier.length; i++) {
-                                String barrier = (String)mapJourney.getBarrier().dequeue();
-                                journeyBarrier[i] = barrier;
-                                mapJourney.getBarrier().enqueue(barrier);
-                            }
-
-                            for (int i = 0; i < edgeBarrier.length; i++) {
-                                for (int j = 0; j < journeyBarrier.length; j++) {
-                                    if (edgeBarrier[i].equals(journeyBarrier[j])) {
-                                        double oldWeight = currEdge.getWeight();
-                                        currEdge.setWeight(oldWeight + WEIGHTINCREASE);
-                                    }
-                                }
-                            }
-
-                            //Check the security of the traveller against the edge security level. If traveller less than edge, remove edge.
-                            int[] edgeSecurity = new int[currEdge.getSecurity().size()];
-                            int journeySecurity = mapJourney.getSecurity();
-                            boolean removeEdge = false;
-
-                            for (int i = 0; i < edgeSecurity.length; i++) {
-                                int security = Integer.parseInt(currEdge.getSecurity().dequeue().toString());
-                                edgeSecurity[i] = security;
-                                currEdge.getSecurity().enqueue(security);
-                            }
-                            for (int i = 0; i < edgeSecurity.length; i++) {
-                                if (journeySecurity >= edgeSecurity[i]) {
-                                    removeEdge = false;
-                                } else {
-                                    removeEdge = true;
-                                }
-                            }
-                            if (removeEdge) {
-                                edgeIter.remove();
-                            }
-                        
-                        }
-                        newGraph.deleteVertex("");
-                        newGraph.addVertex("", WEIGHTINCREASE);
-                    } else {
-                        System.out.println("Destination provided in journey does not exist! Please re-enter journey details and try again");
+                //Iterate through the edges to find the greatest weight
+                Iterator weightIter = edgeList.iterator();
+                double maxWeight = 0;
+                while (weightIter.hasNext()) {
+                    DSAGraph.DSAGraphEdge currEdge = (DSAGraph.DSAGraphEdge)weightIter.next();
+                    if (currEdge.getWeight() > maxWeight) {
+                        maxWeight = currEdge.getWeight();                   
                     }
-                } else {
-                    System.out.println("Source provided in journey does not exist! Please re-enter journey details and try again");
                 }
+                final int WEIGHTINCREASE = (int)Math.ceil(maxWeight);
+                
+                //Loop through the edgeList, removing edges with higher security and increasing the weighting of edges with barriers
+                while (edgeIter.hasNext()) {
+                    //Extract the current edge from the linked list
+                    DSAGraph.DSAGraphEdge currEdge = (DSAGraph.DSAGraphEdge)edgeIter.next();
+        
+                    //If the edge contains a barrier that should be avoided, increase the weight by WEIGHTINCREASE
+                    String[] edgeBarrier = new String[currEdge.getBarrier().size()];
+                    String[] journeyBarrier = new String[mapJourney.getBarrier().size()];
+
+                    for (int i = 0; i < edgeBarrier.length; i++) {
+                        String barrier = (String)currEdge.getBarrier().dequeue();
+                        edgeBarrier[i] = barrier;
+                        currEdge.getBarrier().enqueue(barrier);
+                    }
+                    for (int i = 0; i < journeyBarrier.length; i++) {
+                        String barrier = (String)mapJourney.getBarrier().dequeue();
+                        journeyBarrier[i] = barrier;
+                        mapJourney.getBarrier().enqueue(barrier);
+                    }
+
+                    for (int i = 0; i < edgeBarrier.length; i++) {
+                        for (int j = 0; j < journeyBarrier.length; j++) {
+                            if (edgeBarrier[i].equals(journeyBarrier[j])) {
+                                double oldWeight = currEdge.getWeight();
+                                currEdge.setWeight(oldWeight + WEIGHTINCREASE);
+                            }
+                        }
+                    }
+
+                    //Check the security of the traveller against the edge security level. If traveller less than edge, remove edge.
+                    int[] edgeSecurity = new int[currEdge.getSecurity().size()];
+                    int journeySecurity = mapJourney.getSecurity();
+                    boolean removeEdge = false;
+
+                    for (int i = 0; i < edgeSecurity.length; i++) {
+                        int security = Integer.parseInt(currEdge.getSecurity().dequeue().toString());
+                        edgeSecurity[i] = security;
+                        currEdge.getSecurity().enqueue(security);
+                    }
+                    for (int i = 0; i < edgeSecurity.length; i++) {
+                        if (journeySecurity >= edgeSecurity[i]) {
+                            removeEdge = false;
+                        } else {
+                            removeEdge = true;
+                        }
+                    }
+                    if (removeEdge) {
+                        edgeIter.remove();
+                    }
+                
+                }
+                try {
+                    newGraph.deleteVertex("");
+                } catch (NullPointerException e) {}
+                newGraph.addVertex("", WEIGHTINCREASE);
             } else {
-                System.out.println("The journey has not been provided, please provide a journey");
+                System.out.println("Destination provided in journey does not exist! Please re-enter journey details and try again");
+                newGraph = null;
             }
         } else {
-            System.out.println("The map has not been provided, please provide a map");
+            System.out.println("Source provided in journey does not exist! Please re-enter journey details and try again");
+            newGraph = null;
         }
         return newGraph;
     }
 
-    public static void findRoutes(DSAGraph mapGraph, Journey mapJourney) {
-        mapGraph.GetPaths("314.221.lab", "204.238.lab");
-    }   
+    public static DSALinkedList calculateRoutes(DSAGraph mapGraph, Journey mapJourney) {
+        return mapGraph.GetPaths(mapJourney.getFrom(), mapJourney.getTo());
+    }
 
-    public static void displayWorld(DSAGraph mapGraph, Journey mapJourney) {
+    public static Object[] rankRoutes(DSALinkedList routes) {
+        //Array which will store the arrays containing route edges
+        Object[] listOfEdges = new Object[routes.size()];
+        int j = 0;
+
+        //Iterate through each route that has been created, and place it into an array
+        Iterator routeIter = routes.iterator();
+        while (routeIter.hasNext()) {
+            //Extract the stack from the iterator
+            DSAStack oldPath = (DSAStack)routeIter.next();
+
+            //Create an array to hold each edge in the route
+            Object[] path = new Object[oldPath.size() + 1];
+
+            //The first element of the array is reserved to hold the total distance of the path
+            int i = 1;
+
+            //Copy each element over to the array
+            while (!oldPath.isEmpty()) {    
+                path[i] = oldPath.pop();
+                i++;
+            }
+    
+            listOfEdges[j] = path;
+            j++;
+        }
+        //We then go through each element, and add up the total distances for the path
+        addDistances(listOfEdges);
+
+        //Now we have an array, containing an array in each element
+        //Each array contains the edges that make up the path, and their total distance
+        //Now the array will be sorted smallest to largest
+        insertionSort(listOfEdges);
+
+        return listOfEdges;
+    }
+
+    private static void resetDistance(DSAGraph traversableGraph, Object[] finalRouteList, DSAQueue barrier) {
+        DSALinkedList edgeList = traversableGraph.getEdgeList();
+        Iterator edgeIter = edgeList.iterator();
+
+        String weightChangePerBarrier = traversableGraph.getVertex("").getValue().toString();
+
+        //Extract the barrier(s) from the journey
+        String[] journeyBarrier = new String[barrier.size()];
+        for (int i = 0; i < barrier.size(); i++) {
+            String tempBarrier = (String)barrier.dequeue();
+            journeyBarrier[i] = tempBarrier;
+        }
+        
+        //Loop through the edgeList, decreasing the weighting of the edges with barriers
+        while (edgeIter.hasNext()) {
+            //Extract the current edge from the linked list
+            DSAGraph.DSAGraphEdge currEdge = (DSAGraph.DSAGraphEdge)edgeIter.next();
+
+            //If the edge contains a barrier that should be avoided, increase the weight by WEIGHTINCREASE
+            String[] edgeBarrier = new String[currEdge.getBarrier().size()];
+
+
+            for (int i = 0; i < edgeBarrier.length; i++) {
+                String tempBarrier = currEdge.getBarrier().dequeue().toString();
+                edgeBarrier[i] = tempBarrier;
+                currEdge.getBarrier().enqueue(barrier);
+            }
+
+            for (int i = 0; i < edgeBarrier.length; i++) {
+                for (int j = 0; j < journeyBarrier.length; j++) {
+                    if (edgeBarrier[i].equals(journeyBarrier[j])) {
+                        double oldWeight = currEdge.getWeight();
+                        currEdge.setWeight(oldWeight - Double.parseDouble(weightChangePerBarrier));
+                    }
+                }
+            }
+        }
+        addDistances(finalRouteList);
+    }
+
+    public static void addDistances(Object[] listOfEdges) {
+        for (int i = 0; i < listOfEdges.length; i++) {
+            Object[] edge = (Object[])listOfEdges[i];
+            double totalDistanceBefore = 0;
+            for (int a = 1; a < edge.length; a++) {
+                DSAGraph.DSAGraphEdge e = (DSAGraph.DSAGraphEdge)edge[a];
+                totalDistanceBefore += e.getWeight();
+            }
+            edge[0] = totalDistanceBefore;
+        }
+    }
+
+    public static void insertionSort(Object[] bigArray) {
+        int size = bigArray.length;
+        for (int i = 1; i < size; i++) {
+            Object[] hold = (Object[])bigArray[i];
+            int j = i - 1;
+            Object[] front = (Object[])bigArray[j];
+            while ((j > -1) && (Double.parseDouble(front[0].toString()) > Double.parseDouble(hold[0].toString()))) {
+                Object temp = bigArray[j];
+                bigArray[j] = bigArray[j + 1];
+                bigArray[j + 1] = temp;
+                j--;
+            }
+        }
+    }
+
+    private static void saveRoutes(Object[] finalRouteList, String fileName) {
+        try (PrintWriter pw = new PrintWriter(fileName)) {
+            for (int i = finalRouteList.length - 1; i > -1; i--) {
+                pw.print("\n" + (i + 1) + ". ");
+                Object[] edge = (Object[])finalRouteList[i];
+    
+                for (int j = 1; j < edge.length; j++) {
+                    DSAGraph.DSAGraphEdge currEdge = (DSAGraph.DSAGraphEdge)edge[j];
+                    if (j == 1) {
+                        pw.print(currEdge.getSource().getLabel() + "  -->  ");
+                    }
+                    pw.print(currEdge.getDest().getLabel() + "  -->  ");
+                }
+                pw.print("  # Distance = " + edge[0]);
+            }
+            pw.close();
+        } catch (IOException e) {
+            System.out.println("Unable to save to file");
+        }
+    }
+
+    private static void printRoutes(Object[] finalRouteList) {
+        for (int i = finalRouteList.length - 1; i > -1; i--) {
+            System.out.print("\n" + (i + 1) + ". ");
+            Object[] edge = (Object[])finalRouteList[i];
+
+            for (int j = 1; j < edge.length; j++) {
+                DSAGraph.DSAGraphEdge currEdge = (DSAGraph.DSAGraphEdge)edge[j];
+                if (j == 1) {
+                    System.out.print(currEdge.getSource().getLabel() + "  -->  ");
+                }
+                System.out.print(currEdge.getDest().getLabel() + "  -->  ");
+            }
+            DSAGraph.DSAGraphEdge e = (DSAGraph.DSAGraphEdge)edge[1];
+            System.out.println("  # Distance = " + edge[0] + e.getWeightUnit());
+        }
+    }
+
+    public static void displayWorld(DSAGraph mapGraph, Journey mapJourney, double multiplier) {
         Scanner sc = new Scanner(System.in);
         System.out.println("---World Overview---");
 
-        if (mapGraph == null) {
-            System.out.println("Sorry! A map must be provided before using this feature");
-        } else {
-            System.out.print("Total Vertices: ");
-            System.out.println(mapGraph.getVertexCount());
+        System.out.print("Total Vertices: ");
+        System.out.println(mapGraph.getVertexCount());
 
-            System.out.print("Total Edges: ");
-            System.out.println(mapGraph.getEdgeCount());
+        System.out.print("Total Edges: ");
+        System.out.println(mapGraph.getEdgeCount());
 
-            System.out.print("\nProvided Journey: ");
-            try {
-                System.out.println(mapJourney.toString());
-            } catch (Exception e) {
-                System.out.println("No journey provided yet");
-            }
-            System.out.println("\nAdjacency List Representation: ");
-            mapGraph.displayAsList();
-            
-            System.out.println("\n\n(1) Save\n(2) Discard");
-            try {
-                int userChoice = Integer.parseInt(sc.nextLine().trim());
-                if (userChoice == 1) {
+        System.out.print("Current Multiplier: ");
+        System.out.println(multiplier);
+
+        System.out.print("Current Unit: ");
+        DSALinkedList list = mapGraph.getEdgeList();
+        DSAGraph.DSAGraphEdge edge = (DSAGraph.DSAGraphEdge)list.peekFirst();
+        if (edge.getWeightUnit() != null) {
+            System.out.println(edge.getWeightUnit());
+        }
+
+        System.out.print("\nProvided Journey: ");
+        try {
+            System.out.println(mapJourney.toString());
+        } catch (Exception e) {
+            System.out.println("No journey provided yet");
+        }
+        System.out.println("\nAdjacency List Representation: ");
+        mapGraph.displayAsList();
+        
+        System.out.println("\n\n(1) Save\n(2) Discard");
+        try {
+            int userChoice = Integer.parseInt(sc.nextLine().trim());
+            if (userChoice == 1) {
+                try {
+                    PrintWriter pw = new PrintWriter("World.txt");
+                    pw.println("---World Overview---");
+
+                    pw.print("Total Vertices: ");
+                    pw.println(mapGraph.getVertexCount());
+
+                    pw.print("Total Edges: ");
+                    pw.println(mapGraph.getEdgeCount());
+
+                    pw.print("\nProvided Journey: ");
                     try {
-                        PrintWriter pw = new PrintWriter("World.txt");
-                        pw.println("---World Overview---");
-
-                        pw.print("Total Vertices: ");
-                        pw.println(mapGraph.getVertexCount());
-
-                        pw.print("Total Edges: ");
-                        pw.println(mapGraph.getEdgeCount());
-
-                        pw.print("\nProvided Journey: ");
-                        try {
-                            pw.println(mapJourney.toString());
-                        } catch (Exception e) {
-                            pw.println("No journey provided yet");
-                        }
-                        pw.println("\nAdjacency List Representation: ");
-                              
-                        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                        System.setOut(new PrintStream(buffer));
-
-                        mapGraph.displayAsList();
-
-                        System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
-
-                        String content = buffer.toString();
-                        buffer.reset();
-                        pw.println(content);
-
-                        pw.close();
-                    } catch (IOException e2) {
-                        System.out.println("Unable to save to file. Aborting...");
+                        pw.println(mapJourney.toString());
+                    } catch (Exception e) {
+                        pw.println("No journey provided yet");
                     }
-                } 
-            } catch (NumberFormatException e1) {
-                System.out.println("Invalid Input! Discarding...");
-            }
+                    pw.println("\nAdjacency List Representation: ");
+                            
+                    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                    System.setOut(new PrintStream(buffer));
+
+                    mapGraph.displayAsList();
+
+                    System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+
+                    String content = buffer.toString();
+                    buffer.reset();
+                    pw.println(content);
+
+                    pw.close();
+                } catch (IOException e2) {
+                    System.out.println("Unable to save to file. Aborting...");
+                }
+            } 
+        } catch (NumberFormatException e1) {
+            System.out.println("Invalid Input! Discarding...");
         }
     }
 }
