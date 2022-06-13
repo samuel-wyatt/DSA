@@ -1,0 +1,2 @@
+Sorting a 100 element array would have different behaviours for both merge and quick sort. Merge sort would have an increased amount of function calls, but a lower level of recursion. Quicksort would have less function calls, but a higher level of recursion.
+However, a 100 element array is not nearly large enough for either of these properties to make a difference. 

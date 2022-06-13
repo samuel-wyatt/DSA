@@ -1,0 +1,26 @@
+A = [2, 0, 5, 5, 5, 5, 3, 5]
+
+quicksort(A)
+
+  qsort_rec(A, 0, 7)
+  dopart(A, 0, 7, 0)
+
+    qsort_rec(A, 0, 0)
+    qsort_rec(A, 2, 7)
+    dopart(A, 2, 7, 2)
+    
+      qsort_rec(A, 2, 2)
+      qsort_rec(A, 4, 7)
+      dopart(A, 4, 7, 4)
+      
+        qsort_rec(A, 4, 3)
+        qsort_rec(A, 5, 7)
+        dopart(A, 5, 7, 5)
+
+          qsort_rec(A, 5, 4)
+          qsort_rec(A, 6, 7)
+          dopart(A, 6, 7, 6)
+          
+            qsort_rec(A, 6, 5)
+            qsort_rec(A, 7, 7)
+  

@@ -1,0 +1,7 @@
+Movie:"Monty Python and the Holy Grail"(1975); Rating: 8.2; Quotes: "It's just a flesh wound!"| "Run away!"
+Movie:"Life of Brian"(1979); Rating: 8.0;Quotes: "All right, but apart from the sanitation, the medicine, education, wine, public order, irrigation, roads, a fresh water system, and public health, what have the Romans ever done for us?"|"Always look on the bright side of life!"|"Blessed are the cheesemakers"
+Movie:"The Meaning of Life"(1983); Rating: 7.5; Quotes: "Can we have your liver then?"|"And, uh, get the machine that goes 'ping'"
+Movie: "Star Wars: Episode IV - A New Hope"(1977); Rating: 8.6; Quotes: "Use the Force, Luke"|"Will someone get this walking carpet out of my way?"
+Movie: "Star Wars: Episode V - The Empire Strikes Back"(1980); Rating: 8.7; Quotes: "No. *I* am your father."|"Leia: I love you.... Han: I know "
+Movie: "Star Wars: Episode VI - Return of the Jedi"(1983); Rating: 8.3; Quotes: "A jedi knight? Jeez, I'm out of it for a little while, everyone gets delusions of grandeur!"|"Father... I won't leave you."
+Movie: "Yellowbeard"(1983); Rating: 5.9; Quotes: "Stagger, stagger, crawl, crawl..."|"They'll have to kill me before I'll die!"
