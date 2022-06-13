@@ -1,3 +1,10 @@
+/**********************************************************
+ * Author: Samuel Wyatt (20555535)                        *
+ * Date: 25/04/2022                                       *
+ * File Name: operations                                  *
+ * Purpose: To create a class to control all edge and     * 
+ * node operations                                        *
+ **********************************************************/
 import java.util.*;
 public class operations {
     public static void nodeFind(DSAGraph mapGraph) {
@@ -9,7 +16,7 @@ public class operations {
         if (v == null) {
             System.out.println("ERROR: This node could not be found");
         } else {
-            System.out.println("\nNode Found (Label: Value): " + v.toString() + ": " + v.getValue());
+            System.out.println("\nNode Found (Label: Value) = " + v.toString() + ": " + v.getValue());
         }
     }
 
@@ -139,8 +146,17 @@ public class operations {
                 barrier.enqueue(userIn);
             }
         } while (!userIn2.equals("x") && !userIn2.equals("X"));
-        
-        mapGraph.addEdge(source, dest, security, weight, barrier);
+        if (mapGraph.hasVertex(source) && mapGraph.hasVertex(dest)) {
+            if (weight > 0) {
+                mapGraph.addEdge(source, dest, security, weight, barrier);
+            } else {
+                System.out.println("Weight cannot be negative!");
+            }
+        } else if (!mapGraph.hasVertex(source)) {
+            System.out.println("Source not found! Please try again");
+        } else {
+            System.out.println("Destination not found! Please try again");
+        }
     }
 
     public static void edgeDelete(DSAGraph mapGraph) {
@@ -205,7 +221,12 @@ public class operations {
                             } catch (NumberFormatException e1) {
                                 System.out.println("Invalid Input!");
                             }
-                            e.setWeight(weight);
+                            if (weight > 0) {
+                                e.setWeight(weight);;
+                            } else {
+                                System.out.println("The weight cannot be negative!");
+                            }
+                            
                             break;
                         case 4:
                             System.out.println("(1) Add\n(2) Remove");

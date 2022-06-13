@@ -1,5 +1,12 @@
+/**********************************************************
+ * Author: Samuel Wyatt (20555535)                        *
+ * Date: 09/04/2022                                       *
+ * File Name: serialization                               *
+ * Purpose: To create a class to save and load objects    *
+ * IMPORTANT: This code has been re-used from Practical 4,*
+ * uploaded to blackboard on 09/04/2022                   *
+ **********************************************************/
 import java.io.Serializable;
-
 import java.io.*;
 public class serialization implements Serializable {   
     public static void save(DSAGraph objToSave, String fileName) {

@@ -49,14 +49,4 @@ public class DSAQueue implements Iterable, Serializable {
     public Iterator iterator() {
         return queue.iterator();
     }
-
-    public String toString() {
-        String toString = "";
-        Iterator iter = queue.iterator();
-
-        while (iter.hasNext()) {
-            toString += iter.next() + " ";
-        }
-        return toString.trim();
-    }
 }

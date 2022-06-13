@@ -15,6 +15,10 @@ public class DSAStack implements Iterable {
         return (stack.size() == 0);
     }
 
+    public int size() {
+        return stack.size();
+    }
+
     public void display() {
         System.out.println(stack.toString());
     }
